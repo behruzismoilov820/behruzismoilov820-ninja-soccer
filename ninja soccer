@@ -1,0 +1,189 @@
+HTML
+
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷 NINJA SOCCER 2D ⚽</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            min-height: 100vh; overflow: hidden;
+        }
+        h1 {
+            margin: 10px 0; color: #38bdf8; font-size: 32px;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+        #gameContainer {
+            background: rgba(30, 41, 59, 0.9);
+            padding: 20px; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        #ninjaMenu { text-align: center; padding: 30px; }
+        .btn {
+            display: block; width: 250px; padding: 15px; margin: 15px auto;
+            background: #2563eb; color: white; border: none; border-radius: 12px;
+            font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .btn:hover { background: #1d4ed8; transform: scale(1.05); }
+        canvas {
+            border: 3px solid rgba(56, 189, 248, 0.4); border-radius: 16px;
+            background: #0f172a; display: none;
+        }
+        .controls-info { margin-top: 15px; color: #94a3b8; font-size: 14px; text-align: center; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <h1>🥷 NINJA SOCCER ⚽</h1>
+    <div id="gameContainer">
+        <div id="ninjaMenu">
+            <h2>O'yin Rejimini Tanlang</h2>
+            <button class="btn" onclick="startNinja(1)">1 Kishi (Botga qarshi)</button>
+            <button class="btn" style="background: #10b981;" onclick="startNinja(2)">2 Kishilik (Do'st bilan)</button>
+            <div class="controls-info">
+                <p><b>P1 (Qizil):</b> Yurish: <b>W, A, D</b> | Pass: <b>S</b> | Shot: <b>E</b></p>
+                <p><b>P2 (Ko'k):</b> Yurish: <b>I, J, L</b> | Pass: <b>K</b> | Shot: <b>O</b></p>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="700" height="400"></canvas>
+    </div>
+    <script>
+        let canvas = document.getElementById('gameCanvas');
+        let ctx = canvas.getContext("2d");
+        let ninjaMenu = document.getElementById('ninjaMenu');
+        let gameMode = 1;
+        let score1 = 0, score2 = 0;
+        let p1 = { x: 100, y: 280, w: 40, h: 70, vx: 0, vy: 0, color: "#ef4444" };
+        let p2 = { x: 560, y: 280, w: 40, h: 70, vx: 0, vy: 0, color: "#3b82f6" };
+        let ball = { x: 350, y: 150, r: 14, vx: 0, vy: 0, color: "#facc15" };
+        let keys = {};
+        let gameRunning = false;
+
+        window.addEventListener("keydown", e => { keys[e.key] = true; keys[e.key.toLowerCase()] = true; keys[e.key.toUpperCase()] = true; });
+        window.addEventListener("keyup", e => { keys[e.key] = false; keys[e.key.toLowerCase()] = false; keys[e.key.toUpperCase()] = false; });
+
+        function startNinja(mode) {
+            gameMode = mode;
+            ninjaMenu.style.display = 'none';
+            canvas.style.display = 'block';
+            score1 = 0; score2 = 0;
+            resetPositions();
+            gameRunning = true;
+            loop();
+        }
+
+        function resetPositions() {
+            p1.x = 100; p1.y = 280; p1.vx = 0; p1.vy = 0;
+            p2.x = 560; p2.y = 280; p2.vx = 0; p2.vy = 0;
+            ball.x = 350; ball.y = 100; ball.vx = 0; ball.vy = 0;
+        }
+
+        function update() {
+            if (!gameRunning) return;
+
+            // P1 Boshqaruvi
+            if (keys["a"]) p1.vx = -4.5;
+            else if (keys["d"]) p1.vx = 4.5;
+            else p1.vx = 0;
+            if (keys["w"] && p1.y >= 280) p1.vy = -12;
+
+            // P2 yoki Bot Boshqaruvi
+            if (gameMode === 2) {
+                if (keys["j"]) p2.vx = -4.5;
+                else if (keys["l"]) p2.vx = 4.5;
+                else p2.vx = 0;
+                if (keys["i"] && p2.y >= 280) p2.vy = -12;
+            } else {
+                if (ball.x > p2.x + 15) p2.vx = 3.2;
+                else if (ball.x < p2.x - 15) p2.vx = -3.2;
+                else p2.vx = 0;
+                if (ball.y < p2.y && p2.y >= 280 && Math.random() < 0.03) p2.vy = -11;
+            }
+
+            // Fizika va Harakat
+            [p1, p2].forEach(p => {
+                p.vy += 0.55; p.y += p.vy; p.x += p.vx;
+                if (p.y > 280) { p.y = 280; p.vy = 0; }
+                if (p.x < 0) p.x = 0; if (p.x > 660) p.x = 660;
+            });
+
+            if (p1.x > 310) p1.x = 310;
+            if (p2.x < 350) p2.x = 350;
+
+            // PASS va SHOT mexanikasi
+            let p1Dist = Math.hypot(ball.x - (p1.x + p1.w/2), ball.y - (p1.y + p1.h/2));
+            if (p1Dist < 45) {
+                if (keys["s"]) { // P1 Pass (S)
+                    ball.vx = 7; ball.vy = -4;
+                }
+                if (keys["e"]) { // P1 Shot (E)
+                    ball.vx = 14; ball.vy = -8;
+                }
+            }
+
+            let p2Dist = Math.hypot(ball.x - (p2.x + p2.w/2), ball.y - (p2.y + p2.h/2));
+            if (p2Dist < 45) {
+                if (keys["k"]) { // P2 Pass (K)
+                    ball.vx = -7; ball.vy = -4;
+                }
+                if (keys["o"]) { // P2 Shot (O)
+                    ball.vx = -14; ball.vy = -8;
+                }
+            }
+
+            ball.vy += 0.4; ball.x += ball.vx; ball.y += ball.vy;
+
+            if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx *= -0.8; }
+            if (ball.x + ball.r > 700) { ball.x = 700 - ball.r; ball.vx *= -0.8; }
+            if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy *= -0.8; }
+            if (ball.y + ball.r > 350) {
+                ball.y = 350 - ball.r; ball.vy *= -0.7; ball.vx *= 0.95;
+            }
+
+            // Gollar
+            if (ball.x - ball.r < 50 && ball.y > 210) { score2++; resetPositions(); }
+            if (ball.x + ball.r > 650 && ball.y > 210) { score1++; resetPositions(); }
+
+            [p1, p2].forEach(p => {
+                let cx = Math.max(p.x, Math.min(ball.x, p.x + p.w));
+                let cy = Math.max(p.y, Math.min(ball.y, p.y + p.h));
+                let dx = ball.x - cx, dy = ball.y - cy;
+                if (Math.sqrt(dx*dx + dy*dy) < ball.r) {
+                    ball.vx = (ball.x - (p.x + p.w/2)) * 0.2 + p.vx * 0.4;
+                    ball.vy = (ball.y - (p.y + p.h/2)) * 0.2 + p.vy * 0.4;
+                }
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 4;
+            ctx.strokeRect(0, 210, 50, 140); ctx.strokeRect(650, 210, 50, 140);
+            ctx.fillStyle = "#334155"; ctx.fillRect(0, 350, 700, 50);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 26px Segoe UI"; ctx.textAlign = "center";
+            ctx.fillText(`${score1} : ${score2}`, 350, 45);
+            ctx.fillStyle = p1.color; ctx.fillRect(p1.x, p1.y, p1.w, p1.h);
+            ctx.beginPath(); ctx.arc(p1.x + p1.w/2, p1.y + 15, 14, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = p2.color; ctx.fillRect(p2.x, p2.y, p2.w, p2.h);
+            ctx.beginPath(); ctx.arc(p2.x + p2.w/2, p2.y + 15, 14, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = ball.color; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
+        }
+
+        function loop() {
+            if (!gameRunning) return;
+            update(); draw(); requestAnimationFrame(loop);
+        }
+    </script>
+</body>
+</html>
