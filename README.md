@@ -6,7 +6,7 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🥷 NINJA SOCCER 2D ⚽</title>
+    <title>🥷 NINJA SOCCER 2D - ULTIMATE EDITION ⚽</title>
     <style>
         * { box-sizing: border-box; touch-action: manipulation; }
         body {
@@ -32,8 +32,9 @@ HTML
         .btn {
             display: block; width: 230px; padding: 14px; margin: 12px auto;
             background: #2563eb; color: white; border: none; border-radius: 12px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
         }
+        .btn:hover { background: #1d4ed8; transform: scale(1.03); }
 
         .char-grid {
             display: grid;
@@ -51,7 +52,9 @@ HTML
             font-weight: bold;
             font-size: 14px;
             cursor: pointer;
+            transition: 0.2s;
         }
+        .char-btn:hover { transform: scale(1.02); }
 
         .menu-btn {
             position: absolute; top: 15px; left: 15px;
@@ -60,12 +63,25 @@ HTML
             border-radius: 8px; cursor: pointer; display: none; z-index: 10;
         }
 
+        /* G'oliblik oynasi */
+        #winModal {
+            display: none;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 20px;
+            flex-direction: column; justify-content: center; align-items: center;
+            z-index: 20;
+        }
+        #winModal h2 { font-size: 32px; color: #facc15; margin-bottom: 10px; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); }
+        #winText { font-size: 20px; margin-bottom: 25px; color: #fff; font-weight: bold; text-align: center; }
+
         canvas {
             border: 3px solid rgba(56, 189, 248, 0.4); border-radius: 16px;
             background: #0f172a; display: none; width: 100%; height: auto;
         }
-        .controls-info { margin-top: 10px; color: #94a3b8; font-size: 13px; text-align: center; }
+        .controls-info { margin-top: 10px; color: #94a3b8; font-size: 13px; text-align: center; line-height: 1.4; }
 
+        /* Sensorli tugmalar */
         .touch-controls {
             display: none;
             width: 100%;
@@ -92,16 +108,19 @@ HTML
     <div id="gameContainer">
         <button class="menu-btn" id="menuBtn" onclick="returnToMenu()">🏠 Menu</button>
 
+        <!-- Boshlang'ich Menyu -->
         <div id="ninjaMenu">
             <h2>O'yin Rejimini Tanlang</h2>
             <button class="btn" onclick="selectMode(1)">1 Kishi (Botga qarshi)</button>
             <button class="btn" style="background: #10b981;" onclick="selectMode(2)">2 Kishilik (Do'st bilan)</button>
             <div class="controls-info">
+                <p><b>Vaqt:</b> O'yin 1 daqiqa (60 soniya) davom etadi!</p>
                 <p><b>Kompyuter:</b> P1 (W,A,D | Pass: S | Shot: E) | P2 (I,J,L | Pass: K | Shot: O)</p>
-                <p><b>Telefon:</b> Ekrandagi sensorli tugmalar yordamida o'ynaladi!</p>
+                <p><b>Telefon:</b> Ekrandagi sensorli tugmalar ishlatiladi!</p>
             </div>
         </div>
 
+        <!-- Qahramon tanlash -->
         <div id="charSelectMenu">
             <h2 id="selectTitle" style="color: #38bdf8; margin-bottom: 5px;">Qahramonni Tanlang</h2>
             <div class="char-grid" id="charGrid"></div>
@@ -109,6 +128,15 @@ HTML
 
         <canvas id="gameCanvas" width="700" height="400"></canvas>
 
+        <!-- WIN Oynasi -->
+        <div id="winModal">
+            <h2 id="winTitle">🏆 G'OLIB!</h2>
+            <div id="winText">Naruto G'olib Bo'ldi!</div>
+            <button class="btn" style="background: #10b981;" onclick="restartGame()">🔄 Qayta O'ynash</button>
+            <button class="btn" style="background: #ef4444;" onclick="returnToMenu()">🏠 Menyu</button>
+        </div>
+
+        <!-- Sensorli pult -->
         <div class="touch-controls" id="touchPanel">
             <div class="touch-group">
                 <button class="t-btn" ontouchstart="tState.left=true" ontouchend="tState.left=false" onmousedown="tState.left=true" onmouseup="tState.left=false">◀️</button>
@@ -126,14 +154,14 @@ HTML
         const characters = [
             { name: "🦊 Naruto Uzumaki", color: "#f97316" },
             { name: "💜 Sasuke Uchiha", color: "#8b5cf6" },
-            { name: "🤍 Kaguya Otsutsuki", color: "#e2e8f0" },
+            { name: "🤍 Kaguya Otsutsuki", color: "#38bdf8" },
             { name: "🖤 Madara Uchiha", color: "#991b1b" },
             { name: "🌀 Obito Uchiha", color: "#0284c7" },
             { name: "💚 Hashirama Senju", color: "#22c55e" },
             { name: "🔴 Nagato (Pain)", color: "#dc2626" },
-            { name: "❤️ Itachi Uchiha", color: "#1e293b" },
+            { name: "❤️ Itachi Uchiha", color: "#e11d48" },
             { name: "⚡ Minato Namikaze", color: "#eab308" },
-            { name: "🔥 Might Guy", color: "#ef4444" }
+            { name: "🔥 Might Guy", color: "#10b981" }
         ];
 
         let canvas = document.getElementById('gameCanvas');
@@ -144,12 +172,18 @@ HTML
         let charGrid = document.getElementById('charGrid');
         let touchPanel = document.getElementById('touchPanel');
         let menuBtn = document.getElementById('menuBtn');
+        let winModal = document.getElementById('winModal');
+        let winTitle = document.getElementById('winTitle');
+        let winText = document.getElementById('winText');
 
         let gameMode = 1;
         let selectStep = 1;
         let score1 = 0, score2 = 0;
-        let p1 = { x: 100, y: 280, w: 40, h: 70, vx: 0, vy: 0, color: "#f97316", name: "Naruto" };
-        let p2 = { x: 560, y: 280, w: 40, h: 70, vx: 0, vy: 0, color: "#8b5cf6", name: "Sasuke" };
+        let timeLeft = 60;
+        let timerInterval = null;
+
+        let p1 = { x: 100, y: 280, w: 30, h: 70, vx: 0, vy: 0, color: "#f97316", name: "Naruto", anim: 0 };
+        let p2 = { x: 560, y: 280, w: 30, h: 70, vx: 0, vy: 0, color: "#8b5cf6", name: "Sasuke", anim: 0 };
         let ball = { x: 350, y: 150, r: 14, vx: 0, vy: 0, color: "#facc15" };
         let keys = {};
         let tState = { left: false, right: false, jump: false, pass: false, shot: false };
@@ -205,21 +239,60 @@ HTML
 
         function startNinjaGame() {
             charSelectMenu.style.display = 'none';
+            winModal.style.display = 'none';
             canvas.style.display = 'block';
             touchPanel.style.display = 'flex';
             menuBtn.style.display = 'block';
             score1 = 0; score2 = 0;
+            timeLeft = 60;
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (gameRunning) {
+                    timeLeft--;
+                    if (timeLeft <= 0) {
+                        endGame();
+                    }
+                }
+            }, 1000);
+
             resetPositions();
             gameRunning = true;
             loop();
         }
 
+        function restartGame() {
+            startNinjaGame();
+        }
+
+        function endGame() {
+            gameRunning = false;
+            clearInterval(timerInterval);
+            winModal.style.display = 'flex';
+
+            if (score1 > score2) {
+                winTitle.innerText = "🎉 WINNER! 🎉";
+                winText.innerText = `${p1.name} G'olib Bo'ldi!\nHisob: ${score1} : ${score2}`;
+                winText.style.color = p1.color;
+            } else if (score2 > score1) {
+                winTitle.innerText = "🎉 WINNER! 🎉";
+                winText.innerText = `${p2.name} G'olib Bo'ldi!\nHisob: ${score2} : ${score1}`;
+                winText.style.color = p2.color;
+            } else {
+                winTitle.innerText = "🤝 DURANG!";
+                winText.innerText = `O'yin tenglik bilan tugadi!\nHisob: ${score1} : ${score2}`;
+                winText.style.color = "#facc15";
+            }
+        }
+
         function returnToMenu() {
             gameRunning = false;
+            clearInterval(timerInterval);
             canvas.style.display = 'none';
             touchPanel.style.display = 'none';
             menuBtn.style.display = 'none';
             charSelectMenu.style.display = 'none';
+            winModal.style.display = 'none';
             ninjaMenu.style.display = 'block';
         }
 
@@ -232,13 +305,14 @@ HTML
         function update() {
             if (!gameRunning) return;
 
-            // Ilk yengil va tez harakat fizikasi
+            // P1
             if (keys["KeyA"] || keys["a"] || tState.left) p1.vx = -4.5;
             else if (keys["KeyD"] || keys["d"] || tState.right) p1.vx = 4.5;
             else p1.vx = 0;
             
             if ((keys["KeyW"] || keys["w"] || tState.jump) && p1.y >= 280) p1.vy = -12;
 
+            // P2 / Bot
             if (gameMode === 2) {
                 if (keys["KeyJ"] || keys["j"]) p2.vx = -4.5;
                 else if (keys["KeyL"] || keys["l"]) p2.vx = 4.5;
@@ -253,8 +327,9 @@ HTML
 
             [p1, p2].forEach(p => {
                 p.vy += 0.55; p.y += p.vy; p.x += p.vx;
+                if (p.vx !== 0) p.anim += 0.2; else p.anim = 0;
                 if (p.y > 280) { p.y = 280; p.vy = 0; }
-                if (p.x < 0) p.x = 0; if (p.x > 660) p.x = 660;
+                if (p.x < 0) p.x = 0; if (p.x > 670) p.x = 670;
             });
 
             if (p1.x > 310) p1.x = 310;
@@ -295,30 +370,68 @@ HTML
             });
         }
 
+        // Odam Figurasi
+        function drawHuman(p) {
+            let cx = p.x + p.w / 2;
+            let cy = p.y;
+            let swing = Math.sin(p.anim) * 8;
+
+            ctx.lineWidth = 4;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = p.color;
+
+            // Bosh
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(cx, cy + 10, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Tana
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 20);
+            ctx.lineTo(cx, cy + 45);
+            ctx.stroke();
+
+            // Qo'llar
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 25);
+            ctx.lineTo(cx - 10 - swing, cy + 35);
+            ctx.moveTo(cx, cy + 25);
+            ctx.lineTo(cx + 10 + swing, cy + 35);
+            ctx.stroke();
+
+            // Oyoqlar
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 45);
+            ctx.lineTo(cx - 8 + swing, cy + 68);
+            ctx.moveTo(cx, cy + 45);
+            ctx.lineTo(cx + 8 - swing, cy + 68);
+            ctx.stroke();
+        }
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Maydon va chiziqlar
+            // Maydon
             ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 4;
             ctx.strokeRect(0, 210, 50, 140); ctx.strokeRect(650, 210, 50, 140);
             ctx.fillStyle = "#334155"; ctx.fillRect(0, 350, 700, 50);
 
-            // Hisob va ismlar
+            // Hisob va Taymer
             ctx.fillStyle = "#fff"; ctx.font = "bold 24px Segoe UI"; ctx.textAlign = "center";
             ctx.fillText(`${score1} : ${score2}`, 350, 45);
+
+            ctx.fillStyle = "#facc15"; ctx.font = "bold 18px Segoe UI";
+            ctx.fillText(`⏱️ 00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`, 350, 20);
+
             ctx.font = "14px Segoe UI";
             ctx.fillStyle = p1.color; ctx.fillText(p1.name, 120, 25);
             ctx.fillStyle = p2.color; ctx.fillText(p2.name, 580, 25);
 
-            // P1
-            ctx.fillStyle = p1.color; ctx.fillRect(p1.x, p1.y, p1.w, p1.h);
-            ctx.beginPath(); ctx.arc(p1.x + p1.w/2, p1.y + 15, 14, 0, Math.PI*2); ctx.fill();
+            // Odam shakllari va To'p
+            drawHuman(p1);
+            drawHuman(p2);
             
-            // P2
-            ctx.fillStyle = p2.color; ctx.fillRect(p2.x, p2.y, p2.w, p2.h);
-            ctx.beginPath(); ctx.arc(p2.x + p2.w/2, p2.y + 15, 14, 0, Math.PI*2); ctx.fill();
-            
-            // To'p
             ctx.fillStyle = ball.color; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
         }
 
