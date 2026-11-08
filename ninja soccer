@@ -92,13 +92,11 @@ HTML
         function update() {
             if (!gameRunning) return;
 
-            // P1 Boshqaruvi
             if (keys["a"]) p1.vx = -4.5;
             else if (keys["d"]) p1.vx = 4.5;
             else p1.vx = 0;
             if (keys["w"] && p1.y >= 280) p1.vy = -12;
 
-            // P2 yoki Bot Boshqaruvi
             if (gameMode === 2) {
                 if (keys["j"]) p2.vx = -4.5;
                 else if (keys["l"]) p2.vx = 4.5;
@@ -111,7 +109,6 @@ HTML
                 if (ball.y < p2.y && p2.y >= 280 && Math.random() < 0.03) p2.vy = -11;
             }
 
-            // Fizika va Harakat
             [p1, p2].forEach(p => {
                 p.vy += 0.55; p.y += p.vy; p.x += p.vx;
                 if (p.y > 280) { p.y = 280; p.vy = 0; }
@@ -121,25 +118,16 @@ HTML
             if (p1.x > 310) p1.x = 310;
             if (p2.x < 350) p2.x = 350;
 
-            // PASS va SHOT mexanikasi
             let p1Dist = Math.hypot(ball.x - (p1.x + p1.w/2), ball.y - (p1.y + p1.h/2));
             if (p1Dist < 45) {
-                if (keys["s"]) { // P1 Pass (S)
-                    ball.vx = 7; ball.vy = -4;
-                }
-                if (keys["e"]) { // P1 Shot (E)
-                    ball.vx = 14; ball.vy = -8;
-                }
+                if (keys["s"]) { ball.vx = 7; ball.vy = -4; }
+                if (keys["e"]) { ball.vx = 14; ball.vy = -8; }
             }
 
             let p2Dist = Math.hypot(ball.x - (p2.x + p2.w/2), ball.y - (p2.y + p2.h/2));
             if (p2Dist < 45) {
-                if (keys["k"]) { // P2 Pass (K)
-                    ball.vx = -7; ball.vy = -4;
-                }
-                if (keys["o"]) { // P2 Shot (O)
-                    ball.vx = -14; ball.vy = -8;
-                }
+                if (keys["k"]) { ball.vx = -7; ball.vy = -4; }
+                if (keys["o"]) { ball.vx = -14; ball.vy = -8; }
             }
 
             ball.vy += 0.4; ball.x += ball.vx; ball.y += ball.vy;
@@ -151,7 +139,6 @@ HTML
                 ball.y = 350 - ball.r; ball.vy *= -0.7; ball.vx *= 0.95;
             }
 
-            // Gollar
             if (ball.x - ball.r < 50 && ball.y > 210) { score2++; resetPositions(); }
             if (ball.x + ball.r > 650 && ball.y > 210) { score1++; resetPositions(); }
 
