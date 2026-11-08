@@ -6,106 +6,81 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🥷 NINJA SOCCER 2D - NARUTO EDITION ⚽</title>
+    <title>🥷 NINJA SOCCER 2D ⚽</title>
     <style>
         * { box-sizing: border-box; touch-action: manipulation; }
         body {
             margin: 0; padding: 10px;
-            background: radial-gradient(circle at center, #1e1b4b, #0f172a, #020617);
+            background: #0f172a;
             color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             min-height: 100vh; overflow: hidden;
         }
-        h1 {
-            margin: 5px 0; color: #fbbf24; font-size: 28px;
-            text-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
-            text-align: center; font-weight: 900; letter-spacing: 1px;
-        }
+        h1 { margin: 5px 0; color: #38bdf8; font-size: 26px; text-align: center; }
         #gameContainer {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 15px; border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 20px rgba(59, 130, 246, 0.2);
+            background: #1e293b;
+            padding: 15px; border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.15);
             display: flex; flex-direction: column; align-items: center;
-            width: 100%; max-width: 740px; position: relative;
+            width: 100%; max-width: 720px; position: relative;
         }
         #ninjaMenu, #charSelectMenu { text-align: center; padding: 10px; width: 100%; }
         #charSelectMenu { display: none; }
         
         .btn {
-            display: block; width: 240px; padding: 14px; margin: 12px auto;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; border-radius: 14px;
-            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s ease;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            display: block; width: 230px; padding: 14px; margin: 12px auto;
+            background: #2563eb; color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
         }
-        .btn:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6); }
 
         .char-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
             margin: 15px 0;
             max-height: 280px;
             overflow-y: auto;
-            padding: 5px;
         }
         .char-btn {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 14px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
             color: white;
             font-weight: bold;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-        }
-        .char-btn:hover { transform: translateY(-2px) scale(1.02); border-color: #fff; }
-        .char-avatar {
-            width: 38px; height: 38px; border-radius: 50%;
-            border: 2px solid #fff; object-fit: cover;
-            box-shadow: 0 0 8px rgba(0,0,0,0.5);
-            background: #fff;
         }
 
         .menu-btn {
             position: absolute; top: 15px; left: 15px;
             background: #ef4444; color: white; border: none;
             padding: 8px 14px; font-size: 14px; font-weight: bold;
-            border-radius: 10px; cursor: pointer; display: none; z-index: 10;
-            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);
+            border-radius: 8px; cursor: pointer; display: none; z-index: 10;
         }
-        .menu-btn:hover { background: #dc2626; }
 
         canvas {
-            border: 3px solid rgba(251, 191, 36, 0.4); border-radius: 18px;
+            border: 3px solid rgba(56, 189, 248, 0.4); border-radius: 16px;
             background: #0f172a; display: none; width: 100%; height: auto;
-            box-shadow: 0 0 30px rgba(0,0,0,0.7);
         }
-        .controls-info { margin-top: 10px; color: #94a3b8; font-size: 13px; text-align: center; line-height: 1.5; }
+        .controls-info { margin-top: 10px; color: #94a3b8; font-size: 13px; text-align: center; }
 
         .touch-controls {
             display: none;
             width: 100%;
-            margin-top: 12px;
+            margin-top: 15px;
             justify-content: space-between;
             gap: 8px;
-            padding: 0 5px;
         }
         .touch-group { display: flex; gap: 6px; }
         .t-btn {
-            background: rgba(51, 65, 85, 0.9); color: white;
-            border: 2px solid rgba(56, 189, 248, 0.5);
+            background: #334155; color: white;
+            border: 2px solid rgba(56, 189, 248, 0.4);
             padding: 14px 18px; font-size: 16px; font-weight: bold;
-            border-radius: 14px; cursor: pointer; user-select: none; outline: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-radius: 12px; cursor: pointer; user-select: none; outline: none;
         }
-        .t-btn:active { background: #2563eb; transform: scale(0.93); }
+        .t-btn:active { background: #2563eb; transform: scale(0.95); }
 
         @media (max-width: 768px) {
             .touch-controls { display: flex; }
@@ -120,15 +95,15 @@ HTML
         <div id="ninjaMenu">
             <h2>O'yin Rejimini Tanlang</h2>
             <button class="btn" onclick="selectMode(1)">1 Kishi (Botga qarshi)</button>
-            <button class="btn" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="selectMode(2)">2 Kishilik (Do'st bilan)</button>
+            <button class="btn" style="background: #10b981;" onclick="selectMode(2)">2 Kishilik (Do'st bilan)</button>
             <div class="controls-info">
                 <p><b>Kompyuter:</b> P1 (W,A,D | Pass: S | Shot: E) | P2 (I,J,L | Pass: K | Shot: O)</p>
-                <p><b>Telefon:</b> Ekrandagi sensorli pult yordamida o'ynaladi!</p>
+                <p><b>Telefon:</b> Ekrandagi sensorli tugmalar yordamida o'ynaladi!</p>
             </div>
         </div>
 
         <div id="charSelectMenu">
-            <h2 id="selectTitle" style="color: #fbbf24; margin-bottom: 5px;">Qahramonni Tanlang</h2>
+            <h2 id="selectTitle" style="color: #38bdf8; margin-bottom: 5px;">Qahramonni Tanlang</h2>
             <div class="char-grid" id="charGrid"></div>
         </div>
 
@@ -149,24 +124,17 @@ HTML
 
     <script>
         const characters = [
-            { name: "Naruto Uzumaki", color: "#f97316", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" },
-            { name: "Sasuke Uchiha", color: "#8b5cf6", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png" },
-            { name: "Kaguya Otsutsuki", color: "#e2e8f0", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/35.png" },
-            { name: "Madara Uchiha", color: "#991b1b", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" },
-            { name: "Obito Uchiha", color: "#0284c7", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png" },
-            { name: "Hashirama Senju", color: "#22c55e", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png" },
-            { name: "Nagato (Pain)", color: "#dc2626", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/130.png" },
-            { name: "Itachi Uchiha", color: "#334155", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png" },
-            { name: "Minato Namikaze", color: "#eab308", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/125.png" },
-            { name: "Might Guy", color: "#ef4444", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/68.png" }
+            { name: "🦊 Naruto Uzumaki", color: "#f97316" },
+            { name: "💜 Sasuke Uchiha", color: "#8b5cf6" },
+            { name: "🤍 Kaguya Otsutsuki", color: "#e2e8f0" },
+            { name: "🖤 Madara Uchiha", color: "#991b1b" },
+            { name: "🌀 Obito Uchiha", color: "#0284c7" },
+            { name: "💚 Hashirama Senju", color: "#22c55e" },
+            { name: "🔴 Nagato (Pain)", color: "#dc2626" },
+            { name: "❤️ Itachi Uchiha", color: "#1e293b" },
+            { name: "⚡ Minato Namikaze", color: "#eab308" },
+            { name: "🔥 Might Guy", color: "#ef4444" }
         ];
-
-        let loadedImages = {};
-        characters.forEach(c => {
-            let img = new Image();
-            img.src = c.img;
-            loadedImages[c.name] = img;
-        });
 
         let canvas = document.getElementById('gameCanvas');
         let ctx = canvas.getContext("2d");
@@ -180,9 +148,9 @@ HTML
         let gameMode = 1;
         let selectStep = 1;
         let score1 = 0, score2 = 0;
-        let p1 = { x: 100, y: 280, w: 42, h: 70, vx: 0, vy: 0, color: "#f97316", name: "Naruto Uzumaki" };
-        let p2 = { x: 560, y: 280, w: 42, h: 70, vx: 0, vy: 0, color: "#8b5cf6", name: "Sasuke Uchiha" };
-        let ball = { x: 350, y: 150, r: 14, vx: 0, vy: 0, color: "#fbbf24" };
+        let p1 = { x: 100, y: 280, w: 40, h: 70, vx: 0, vy: 0, color: "#f97316", name: "Naruto" };
+        let p2 = { x: 560, y: 280, w: 40, h: 70, vx: 0, vy: 0, color: "#8b5cf6", name: "Sasuke" };
+        let ball = { x: 350, y: 150, r: 14, vx: 0, vy: 0, color: "#facc15" };
         let keys = {};
         let tState = { left: false, right: false, jump: false, pass: false, shot: false };
         let gameRunning = false;
@@ -209,8 +177,8 @@ HTML
             characters.forEach(char => {
                 let btn = document.createElement("button");
                 btn.className = "char-btn";
-                btn.style.background = `linear-gradient(135deg, ${char.color}, #0f172a)`;
-                btn.innerHTML = `<img src="${char.img}" class="char-avatar"> <span>${char.name}</span>`;
+                btn.style.background = char.color;
+                btn.innerText = char.name;
                 btn.onclick = () => chooseCharacter(char);
                 charGrid.appendChild(btn);
             });
@@ -264,53 +232,53 @@ HTML
         function update() {
             if (!gameRunning) return;
 
-            // Tezlashtirilgan tezliklar va sakrash fizikasi
-            if (keys["KeyA"] || keys["a"] || tState.left) p1.vx = -6.5;
-            else if (keys["KeyD"] || keys["d"] || tState.right) p1.vx = 6.5;
+            // Ilk yengil va tez harakat fizikasi
+            if (keys["KeyA"] || keys["a"] || tState.left) p1.vx = -4.5;
+            else if (keys["KeyD"] || keys["d"] || tState.right) p1.vx = 4.5;
             else p1.vx = 0;
             
-            if ((keys["KeyW"] || keys["w"] || tState.jump) && p1.y >= 280) p1.vy = -14;
+            if ((keys["KeyW"] || keys["w"] || tState.jump) && p1.y >= 280) p1.vy = -12;
 
             if (gameMode === 2) {
-                if (keys["KeyJ"] || keys["j"]) p2.vx = -6.5;
-                else if (keys["KeyL"] || keys["l"]) p2.vx = 6.5;
+                if (keys["KeyJ"] || keys["j"]) p2.vx = -4.5;
+                else if (keys["KeyL"] || keys["l"]) p2.vx = 4.5;
                 else p2.vx = 0;
-                if ((keys["KeyI"] || keys["i"]) && p2.y >= 280) p2.vy = -14;
+                if ((keys["KeyI"] || keys["i"]) && p2.y >= 280) p2.vy = -12;
             } else {
-                if (ball.x > p2.x + 15) p2.vx = 5;
-                else if (ball.x < p2.x - 15) p2.vx = -5;
+                if (ball.x > p2.x + 15) p2.vx = 3.2;
+                else if (ball.x < p2.x - 15) p2.vx = -3.2;
                 else p2.vx = 0;
-                if (ball.y < p2.y && p2.y >= 280 && Math.random() < 0.05) p2.vy = -13.5;
+                if (ball.y < p2.y && p2.y >= 280 && Math.random() < 0.03) p2.vy = -11;
             }
 
             [p1, p2].forEach(p => {
-                p.vy += 0.8; p.y += p.vy; p.x += p.vx;
+                p.vy += 0.55; p.y += p.vy; p.x += p.vx;
                 if (p.y > 280) { p.y = 280; p.vy = 0; }
-                if (p.x < 0) p.x = 0; if (p.x > 658) p.x = 658;
+                if (p.x < 0) p.x = 0; if (p.x > 660) p.x = 660;
             });
 
             if (p1.x > 310) p1.x = 310;
             if (p2.x < 350) p2.x = 350;
 
             let p1Dist = Math.hypot(ball.x - (p1.x + p1.w/2), ball.y - (p1.y + p1.h/2));
-            if (p1Dist < 48) {
-                if (keys["KeyS"] || keys["s"] || tState.pass) { ball.vx = 9; ball.vy = -6; }
-                if (keys["KeyE"] || keys["e"] || tState.shot) { ball.vx = 17; ball.vy = -10; }
+            if (p1Dist < 45) {
+                if (keys["KeyS"] || keys["s"] || tState.pass) { ball.vx = 7; ball.vy = -4; }
+                if (keys["KeyE"] || keys["e"] || tState.shot) { ball.vx = 14; ball.vy = -8; }
             }
 
             let p2Dist = Math.hypot(ball.x - (p2.x + p2.w/2), ball.y - (p2.y + p2.h/2));
-            if (p2Dist < 48) {
-                if (keys["KeyK"] || keys["k"]) { ball.vx = -9; ball.vy = -6; }
-                if (keys["KeyO"] || keys["o"]) { ball.vx = -17; ball.vy = -10; }
+            if (p2Dist < 45) {
+                if (keys["KeyK"] || keys["k"]) { ball.vx = -7; ball.vy = -4; }
+                if (keys["KeyO"] || keys["o"]) { ball.vx = -14; ball.vy = -8; }
             }
 
-            ball.vy += 0.6; ball.x += ball.vx; ball.y += ball.vy;
+            ball.vy += 0.4; ball.x += ball.vx; ball.y += ball.vy;
 
-            if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx *= -0.85; }
-            if (ball.x + ball.r > 700) { ball.x = 700 - ball.r; ball.vx *= -0.85; }
-            if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy *= -0.85; }
+            if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx *= -0.8; }
+            if (ball.x + ball.r > 700) { ball.x = 700 - ball.r; ball.vx *= -0.8; }
+            if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy *= -0.8; }
             if (ball.y + ball.r > 350) {
-                ball.y = 350 - ball.r; ball.vy *= -0.75; ball.vx *= 0.96;
+                ball.y = 350 - ball.r; ball.vy *= -0.7; ball.vx *= 0.95;
             }
 
             if (ball.x - ball.r < 50 && ball.y > 210) { score2++; resetPositions(); }
@@ -321,72 +289,37 @@ HTML
                 let cy = Math.max(p.y, Math.min(ball.y, p.y + p.h));
                 let dx = ball.x - cx, dy = ball.y - cy;
                 if (Math.sqrt(dx*dx + dy*dy) < ball.r) {
-                    ball.vx = (ball.x - (p.x + p.w/2)) * 0.3 + p.vx * 0.5;
-                    ball.vy = (ball.y - (p.y + p.h/2)) * 0.3 + p.vy * 0.5;
+                    ball.vx = (ball.x - (p.x + p.w/2)) * 0.2 + p.vx * 0.4;
+                    ball.vy = (ball.y - (p.y + p.h/2)) * 0.2 + p.vy * 0.4;
                 }
             });
         }
 
-        function drawField() {
-            let grad = ctx.createLinearGradient(0, 0, 0, 400);
-            grad.addColorStop(0, "#090d16");
-            grad.addColorStop(0.7, "#1e293b");
-            grad.addColorStop(1, "#0f172a");
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, 700, 400);
-
-            let grass = ctx.createLinearGradient(0, 350, 0, 400);
-            grass.addColorStop(0, "#15803d");
-            grass.addColorStop(1, "#166534");
-            ctx.fillStyle = grass;
-            ctx.fillRect(0, 350, 700, 50);
-
-            ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.lineWidth = 3;
-            ctx.strokeRect(0, 210, 50, 140);
-            ctx.strokeRect(650, 210, 50, 140);
-            ctx.beginPath(); ctx.moveTo(350, 0); ctx.lineTo(350, 350); ctx.stroke();
-            ctx.beginPath(); ctx.arc(350, 175, 50, 0, Math.PI * 2); ctx.stroke();
-        }
-
-        function drawPlayer(p) {
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = p.color;
-
-            ctx.fillStyle = p.color;
-            ctx.fillRect(p.x, p.y + 15, p.w, p.h - 15);
-
-            let img = loadedImages[p.name];
-            if (img && img.complete) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(p.x + p.w / 2, p.y + 12, 16, 0, Math.PI * 2);
-                ctx.clip();
-                ctx.drawImage(img, p.x + p.w / 2 - 16, p.y - 4, 32, 32);
-                ctx.restore();
-            } else {
-                ctx.beginPath(); ctx.arc(p.x + p.w / 2, p.y + 12, 14, 0, Math.PI * 2); ctx.fill();
-            }
-
-            ctx.shadowBlur = 0;
-        }
-
         function draw() {
-            drawField();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Maydon va chiziqlar
+            ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 4;
+            ctx.strokeRect(0, 210, 50, 140); ctx.strokeRect(650, 210, 50, 140);
+            ctx.fillStyle = "#334155"; ctx.fillRect(0, 350, 700, 50);
 
-            ctx.fillStyle = "#fbbf24"; ctx.font = "bold 24px Segoe UI"; ctx.textAlign = "center";
-            ctx.fillText(`${score1} : ${score2}`, 350, 40);
-
-            ctx.font = "bold 13px Segoe UI";
+            // Hisob va ismlar
+            ctx.fillStyle = "#fff"; ctx.font = "bold 24px Segoe UI"; ctx.textAlign = "center";
+            ctx.fillText(`${score1} : ${score2}`, 350, 45);
+            ctx.font = "14px Segoe UI";
             ctx.fillStyle = p1.color; ctx.fillText(p1.name, 120, 25);
             ctx.fillStyle = p2.color; ctx.fillText(p2.name, 580, 25);
 
-            drawPlayer(p1);
-            drawPlayer(p2);
-
-            ctx.shadowBlur = 12; ctx.shadowColor = "#fbbf24";
-            ctx.fillStyle = ball.color;
-            ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
-            ctx.shadowBlur = 0;
+            // P1
+            ctx.fillStyle = p1.color; ctx.fillRect(p1.x, p1.y, p1.w, p1.h);
+            ctx.beginPath(); ctx.arc(p1.x + p1.w/2, p1.y + 15, 14, 0, Math.PI*2); ctx.fill();
+            
+            // P2
+            ctx.fillStyle = p2.color; ctx.fillRect(p2.x, p2.y, p2.w, p2.h);
+            ctx.beginPath(); ctx.arc(p2.x + p2.w/2, p2.y + 15, 14, 0, Math.PI*2); ctx.fill();
+            
+            // To'p
+            ctx.fillStyle = ball.color; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
         }
 
         function loop() {
