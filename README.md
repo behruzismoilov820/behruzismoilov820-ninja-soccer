@@ -126,7 +126,7 @@ HTML
     <div id="gameContainer">
         <button class="menu-btn" id="menuBtn" onclick="returnToMenu()">🏠 Menu</button>
 
-        <!-- Kirish Rasmi (2 sekund) -->
+        <!-- Kirish Rasmi (2 sekund)[cite: 2] -->
         <div id="splashScreen">
             <img src="watermarked_img_1437238758356918555.jpg" alt="Ninja Soccer Intro">[cite: 2]
             <p style="color: #facc15; margin-top: 10px; font-weight: bold; font-size: 14px;">Yuklanmoqda...</p>
@@ -189,16 +189,16 @@ HTML
         }, 2000);
 
         const characters = [
-            { name: "Naruto Uzumaki", shirtColor: "#f97316", hairColor: "#eab308", headBand: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=naruto" },
-            { name: "Sasuke Uchiha", shirtColor: "#3b82f6", hairColor: "#1e1b4b", headBand: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=sasuke" },
-            { name: "Kakashi Hatake", shirtColor: "#1e293b", hairColor: "#94a3b8", mask: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=kakashi" },
-            { name: "Madara Uchiha", shirtColor: "#991b1b", hairColor: "#0f172a", spiky: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=madara" },
-            { name: "Itachi Uchiha", shirtColor: "#0f172a", hairColor: "#18181b", cloak: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=itachi" },
+            { name: "Naruto Uzumaki", shirtColor: "#f97316", hairColor: "#eab308", img: "https://api.dicebear.com/7.x/bottts/svg?seed=naruto" },
+            { name: "Sasuke Uchiha", shirtColor: "#3b82f6", hairColor: "#1e1b4b", img: "https://api.dicebear.com/7.x/bottts/svg?seed=sasuke" },
+            { name: "Kakashi Hatake", shirtColor: "#1e293b", hairColor: "#94a3b8", img: "https://api.dicebear.com/7.x/bottts/svg?seed=kakashi" },
+            { name: "Madara Uchiha", shirtColor: "#991b1b", hairColor: "#0f172a", img: "https://api.dicebear.com/7.x/bottts/svg?seed=madara" },
+            { name: "Itachi Uchiha", shirtColor: "#0f172a", hairColor: "#18181b", img: "https://api.dicebear.com/7.x/bottts/svg?seed=itachi" },
             { name: "Hashirama Senju", shirtColor: "#15803d", hairColor: "#14532d", img: "https://api.dicebear.com/7.x/bottts/svg?seed=hashirama" },
-            { name: "Minato Namikaze", shirtColor: "#facc15", hairColor: "#fef08a", cape: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=minato" },
-            { name: "Pain (Nagato)", shirtColor: "#b91c1c", hairColor: "#ff7675", rinnegan: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=pain" },
-            { name: "Obito Uchiha", shirtColor: "#475569", hairColor: "#000000", maskOrange: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=obito" },
-            { name: "Might Guy", shirtColor: "#16a34a", hairColor: "#000000", greenSuit: true, img: "https://api.dicebear.com/7.x/bottts/svg?seed=guy" }
+            { name: "Minato Namikaze", shirtColor: "#facc15", hairColor: "#fef08a", img: "https://api.dicebear.com/7.x/bottts/svg?seed=minato" },
+            { name: "Pain (Nagato)", shirtColor: "#b91c1c", hairColor: "#ff7675", img: "https://api.dicebear.com/7.x/bottts/svg?seed=pain" },
+            { name: "Obito Uchiha", shirtColor: "#475569", hairColor: "#000000", img: "https://api.dicebear.com/7.x/bottts/svg?seed=obito" },
+            { name: "Might Guy", shirtColor: "#16a34a", hairColor: "#000000", img: "https://api.dicebear.com/7.x/bottts/svg?seed=guy" }
         ];
 
         let loadedImages = {};
@@ -223,7 +223,7 @@ HTML
         let bracketText = document.getElementById('bracketText');
 
         let gameMode = 1;
-        let tournamentStage = 1;
+        let tournamentStage = 1; // 1: 1/4 Final, 2: Yarim Final, 3: Final
         let selectStep = 1;
         let score1 = 0, score2 = 0;
         let timeLeft = 60;
@@ -316,7 +316,7 @@ HTML
             let randomBot = botChars[Math.floor(Math.random() * botChars.length)];
             p2 = { ...p2, shirtColor: randomBot.shirtColor, hairColor: randomBot.hairColor, name: randomBot.name, chakra: 100 };
 
-            let stageTitle = tournamentStage === 1 ? "1/4 FINAL" : (tournamentStage === 2 ? "YARIM FINAL (SEMI-FINAL)" : "🔥 KATTA FINAL 🔥");
+            let stageTitle = tournamentStage === 1 ? "1/4 FINAL" : (tournamentStage === 2 ? "YARIM FINAL" : "🔥 KATTA FINAL 🔥");
             bracketText.innerHTML = `<b>BOSHQICH: ${stageTitle}</b><br><br><span style="color:${p1.shirtColor}">${p1.name}</span> VS <span style="color:${p2.shirtColor}">${p2.name}</span>`;
         }
 
@@ -326,7 +326,7 @@ HTML
         }
 
         function startNinjaGame() {
-            charSelectMenu.style.display = 'none'; winModal.style.display = 'none';
+            charSelectMenu.style.display = 'none'; winModal.style.display = 'none'; tournamentModal.style.display = 'none';
             canvas.style.display = 'block'; touchPanel.style.display = 'flex'; menuBtn.style.display = 'block';
             score1 = 0; score2 = 0; timeLeft = 60;
             clearInterval(timerInterval);
@@ -346,10 +346,10 @@ HTML
         function handleWinNext() {
             if (gameMode === 3 && score1 > score2) {
                 if (tournamentStage < 3) {
-                    tournamentStage++;
+                    tournamentStage++; // Keyingi bosqichga o'tish (1/4 ➔ Yarim final ➔ Final)
                     setupTournamentMatch();
                 } else {
-                    returnToMenu();
+                    returnToMenu(); // Kubokni olgach menyuga qaytish
                 }
             } else {
                 restartGame();
@@ -363,13 +363,13 @@ HTML
             if (score1 > score2) {
                 if (gameMode === 3) {
                     if (tournamentStage < 3) {
-                        winTitle.innerText = "🎉 BOSHQICHINGIZ HIKOYASI!";
-                        winText.innerText = `${p1.name} G'olib bo'ldi va keyingi bosqichga o'tdi!`;
-                        nextBtn.innerText = "➡️ KEYINGI BOSHQICH";
+                        winTitle.innerText = "🎉 G'ALABA!";
+                        winText.innerText = `${p1.name} navbatdagi bosqichga o'tdi!`;
+                        nextBtn.innerText = "➡️ KEYINGI O'YIN (BOSHQICH)";
                     } else {
-                        winTitle.innerText = "🏆 CHEMPION!";
-                        winText.innerText = `TABRIKLAYMIZ!\n${p1.name} NINJA CUP CHEMPIONI BO'LDI!`;
-                        nextBtn.innerText = "🔄 QAYTA O'YNASH";
+                        winTitle.innerText = "🏆 NINJA CUP CHEMPIONI! 🏆";
+                        winText.innerText = `🌟 TABRIKLAYMIZ! 🌟\n${p1.name} Katta Finalda g'olib bo'lib, Kubokni qo'lga kiritdi! 🏆`;
+                        nextBtn.innerText = "🏠 MENYUGA QAYTISH";
                     }
                 } else {
                     winTitle.innerText = "🏆 WINNER!";
@@ -383,21 +383,19 @@ HTML
                 if (gameMode === 1 || gameMode === 3) {
                     winTitle.innerText = "❌ YUTQAZDINGIZ!";
                     winTitle.style.color = "#ef4444";
-                    winText.innerText = `Siz mag'lub bo'ldingiz!\nBot (${p2.name}) yutdi: ${score2} : ${score1}`;
+                    winText.innerText = `Turnirdan chiqib ketdingiz!\nBot (${p2.name}) yutdi: ${score2} : ${score1}`;
                     winText.style.color = "#ef4444";
-                    nextBtn.innerText = "🔄 QAYTA O'YNASH";
+                    nextBtn.innerText = "🔄 QAYTA URINIB KO'RISH";
                 } else {
                     winTitle.innerText = "🏆 WINNER!";
                     winTitle.style.color = "#facc15";
                     winText.innerText = `${p2.name} G'olib Bo'ldi!\nHisob: ${score2} : ${score1}`;
-                    winText.style.color = p2.shirtColor;
                     nextBtn.innerText = "🔄 QAYTA O'YNASH";
                 }
             } else {
                 winTitle.innerText = "🤝 DURANG!";
                 winTitle.style.color = "#facc15";
                 winText.innerText = `O'yin tenglik bilan tugadi!\nHisob: ${score1} : ${score2}`;
-                winText.style.color = "#facc15";
                 nextBtn.innerText = "🔄 QAYTA O'YNASH";
             }
         }
@@ -509,31 +507,25 @@ HTML
             ctx.beginPath(); ctx.arc(350, 175, 45, 0, Math.PI * 2); ctx.stroke();
         }
 
-        // Qahramonlarni To'rtburchak va Head Soccer uslubida Canvasda chizish
         function drawHeadPlayer(p, isP1) {
             let cx = p.x + p.w / 2;
             let cy = p.y;
             let swing = Math.sin(p.anim) * 10;
 
-            // To'rtburchak Oyoqlar (Boots)
             ctx.fillStyle = "#1e293b";
             ctx.fillRect(cx - 10 + swing, cy + 62, 8, 10);
             ctx.fillRect(cx + 2 - swing, cy + 62, 8, 10);
 
-            // To'rtburchak Tana (Shirt / Body)
             ctx.fillStyle = p.shirtColor;
             ctx.fillRect(cx - 14, cy + 34, 28, 28);
             
-            // Konoha kiyim detali (Yoqasi)
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(cx - 6, cy + 34, 12, 6);
 
-            // To'rtburchak Qo'llar (Arms)
             ctx.fillStyle = p.shirtColor;
             ctx.fillRect(cx - 22 + swing/2, cy + 38, 8, 16);
             ctx.fillRect(cx + 14 - swing/2, cy + 38, 8, 16);
 
-            // Katta Bosh (Giant Head - To'rtburchakroq va yumaloqlashtirilgan)
             ctx.fillStyle = "#ffedd5";
             ctx.beginPath();
             ctx.roundRect(cx - 24, cy - 12, 48, 44, 10);
@@ -541,13 +533,11 @@ HTML
             ctx.strokeStyle = "#000"; ctx.lineWidth = 1.5;
             ctx.stroke();
 
-            // Soch / Elementlar (Anime Hair)
             ctx.fillStyle = p.hairColor;
             ctx.beginPath();
             ctx.roundRect(cx - 26, cy - 18, 52, 20, [10, 10, 4, 4]);
             ctx.fill();
 
-            // Peshonabog' (Headband)
             ctx.fillStyle = "#334155";
             ctx.fillRect(cx - 24, cy - 4, 48, 8);
             ctx.fillStyle = "#cbd5e1";
@@ -555,14 +545,12 @@ HTML
             ctx.fillStyle = "#000";
             ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill();
 
-            // Katta Anime Ko'zlar
             let eyeX = isP1 ? cx + 8 : cx - 8;
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(eyeX - 5, cy + 10, 10, 12);
             ctx.fillStyle = "#000000";
             ctx.fillRect(eyeX + (isP1 ? 1 : -3), cy + 13, 5, 6);
 
-            // Chakra Bar
             ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 22, cy - 32, 44, 6);
             ctx.fillStyle = p.chakra >= 100 ? "#facc15" : "#3b82f6";
             ctx.fillRect(cx - 22, cy - 32, (p.chakra / 100) * 44, 6);
