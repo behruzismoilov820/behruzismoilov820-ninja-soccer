@@ -6,7 +6,7 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🥷 NINJA SOCCER 2026 - ULTIMATE EDITION ⚽</title>
+    <title>🥷 NINJA SOCCER 2026 - TEAM EDITION ⚽</title>
     <style>
         * { box-sizing: border-box; touch-action: manipulation; }
         body {
@@ -27,7 +27,6 @@ HTML
             width: 100%; max-width: 740px; position: relative;
         }
 
-        /* 2 soniya turadigan Kirish Rasmi */
         #splashScreen {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; height: 420px; text-align: center;
@@ -97,12 +96,12 @@ HTML
 
         .touch-controls {
             display: none; width: 100%; margin-top: 10px;
-            justify-content: space-between; gap: 6px;
+            justify-content: space-between; gap: 6px; flex-wrap: wrap;
         }
         .touch-group { display: flex; gap: 5px; }
         .t-btn {
             background: #334155; color: white; border: 2px solid rgba(56, 189, 248, 0.5);
-            padding: 12px 16px; font-size: 15px; font-weight: bold;
+            padding: 10px 14px; font-size: 14px; font-weight: bold;
             border-radius: 12px; cursor: pointer; user-select: none; outline: none;
             box-shadow: 0 4px 0 #1e293b;
         }
@@ -126,7 +125,7 @@ HTML
     <div id="gameContainer">
         <button class="menu-btn" id="menuBtn" onclick="returnToMenu()">🏠 Menu</button>
 
-        <!-- Kirish Rasmi (2 sekund)[cite: 2] -->
+        <!-- Kirish Rasmi (2 sekund) -->
         <div id="splashScreen">
             <img src="watermarked_img_1437238758356918555.jpg" alt="Ninja Soccer Intro">[cite: 2]
             <p style="color: #facc15; margin-top: 10px; font-weight: bold; font-size: 14px;">Yuklanmoqda...</p>
@@ -134,19 +133,20 @@ HTML
 
         <!-- Asosiy Bosh Menyu -->
         <div id="ninjaMenu">
-            <h2 style="color: #facc15; font-size: 24px; margin-bottom: 15px;">O'YIN REJIMINI TANLANG</h2>
+            <h2 style="color: #facc15; font-size: 24px; margin-bottom: 15px;">O'YIN REJIMINI TANLANG (5 vs 5)</h2>
             <button class="btn" onclick="selectMode(1)">1 KISHI (VS BOT)</button>
             <button class="btn btn-green" onclick="selectMode(2)">2 KISHILIK (2 PLAYER)</button>
             <button class="btn btn-gold" onclick="selectMode(3)">🏆 TURNIR (NINJA CUP)</button>
             <div style="margin-top: 15px; font-size: 13px; color: #94a3b8; line-height: 1.5;">
-                <p><b>Super Zarba:</b> P1 (Q tugmasi) | P2 (U tugmasi)</p>
+                <p><b>O'yinchini almashtirish:</b> Tab (PC) yoki "Switch" tugmasi (Mobil)</p>
+                <p><b>Super Zarba:</b> P1 (Q) | P2 (U)</p>
                 <p><b>Boshqaruv:</b> P1 (W,A,D | S:Pass | E:Shot) | P2 (I,J,L | K:Pass | O:Shot)</p>
             </div>
         </div>
 
         <!-- Ichki Qahramon Tanlash Menyusi -->
         <div id="charSelectMenu">
-            <h2 id="selectTitle" style="color: #facc15; margin-bottom: 5px;">QAHRAMONNI TANLANG</h2>
+            <h2 id="selectTitle" style="color: #facc15; margin-bottom: 5px;">SARDOR QAHRAMONNI TANLANG</h2>
             <div class="char-grid" id="charGrid"></div>
         </div>
 
@@ -174,7 +174,8 @@ HTML
                 <button class="t-btn" ontouchstart="tState.right=true" ontouchend="tState.right=false">▶️</button>
             </div>
             <div class="touch-group">
-                <button class="t-btn super-btn" ontouchstart="triggerSuper(p1)">⚡ JUTSU</button>
+                <button class="t-btn" style="background:#8b5cf6;" onclick="switchActivePlayer(1)">🔄 Almashtir</button>
+                <button class="t-btn super-btn" ontouchstart="triggerSuper(team1[activeP1])">⚡ JUTSU</button>
                 <button class="t-btn" style="background:#059669;" ontouchstart="tState.pass=true" ontouchend="tState.pass=false">Pass</button>
                 <button class="t-btn" style="background:#dc2626;" ontouchstart="tState.shot=true" ontouchend="tState.shot=false">Shot</button>
                 <button class="t-btn" style="background:#2563eb;" ontouchstart="tState.jump=true" ontouchend="tState.jump=false">⬆️</button>
@@ -188,7 +189,7 @@ HTML
             document.getElementById('ninjaMenu').style.display = 'block';
         }, 2000);
 
-        const characters = [
+        const availableChars = [
             { name: "Naruto Uzumaki", shirtColor: "#f97316", hairColor: "#eab308", img: "https://api.dicebear.com/7.x/bottts/svg?seed=naruto" },
             { name: "Sasuke Uchiha", shirtColor: "#3b82f6", hairColor: "#1e1b4b", img: "https://api.dicebear.com/7.x/bottts/svg?seed=sasuke" },
             { name: "Kakashi Hatake", shirtColor: "#1e293b", hairColor: "#94a3b8", img: "https://api.dicebear.com/7.x/bottts/svg?seed=kakashi" },
@@ -202,7 +203,7 @@ HTML
         ];
 
         let loadedImages = {};
-        characters.forEach(c => {
+        availableChars.forEach(c => {
             let img = new Image();
             img.src = c.img;
             loadedImages[c.name] = img;
@@ -223,7 +224,7 @@ HTML
         let bracketText = document.getElementById('bracketText');
 
         let gameMode = 1;
-        let tournamentStage = 1; // 1: 1/4 Final, 2: Yarim Final, 3: Final
+        let tournamentStage = 1;
         let selectStep = 1;
         let score1 = 0, score2 = 0;
         let timeLeft = 60;
@@ -231,8 +232,12 @@ HTML
         let particles = [];
         let ballTrail = [];
 
-        let p1 = { x: 100, y: 250, r: 28, w: 26, h: 30, vx: 0, vy: 0, shirtColor: "#f97316", hairColor: "#eab308", name: "Naruto Uzumaki", chakra: 100, anim: 0 };
-        let p2 = { x: 560, y: 250, r: 28, w: 26, h: 30, vx: 0, vy: 0, shirtColor: "#3b82f6", hairColor: "#1e1b4b", name: "Sasuke Uchiha", chakra: 100, anim: 0 };
+        // 5 tadan o'yinchidan iborat Jamoalar
+        let team1 = [];
+        let team2 = [];
+        let activeP1 = 0; // Hozir boshqarilayotgan 1-jamoa o'yinchisi indeksi (0 dan 4 gacha)
+        let activeP2 = 0; // Hozir boshqarilayotgan 2-jamoa o'yinchisi indeksi
+
         let ball = { x: 350, y: 150, r: 14, vx: 0, vy: 0, color: "#facc15", super: false };
         let keys = {};
         let tState = { left: false, right: false, jump: false, pass: false, shot: false };
@@ -240,16 +245,25 @@ HTML
 
         window.addEventListener("keydown", e => {
             keys[e.code] = true; keys[e.key.toLowerCase()] = true;
-            if (e.code === "KeyQ") triggerSuper(p1);
-            if (e.code === "KeyU" && gameMode === 2) triggerSuper(p2);
+            if (e.code === "KeyQ") triggerSuper(team1[activeP1]);
+            if (e.code === "KeyU" && gameMode === 2) triggerSuper(team2[activeP2]);
+            if (e.code === "Tab") { e.preventDefault(); switchActivePlayer(1); }
         });
         window.addEventListener("keyup", e => { keys[e.code] = false; keys[e.key.toLowerCase()] = false; });
+
+        function switchActivePlayer(teamNum) {
+            if (teamNum === 1) {
+                activeP1 = (activeP1 + 1) % team1.length;
+            } else {
+                activeP2 = (activeP2 + 1) % team2.length;
+            }
+        }
 
         function triggerSuper(p) {
             if (p.chakra >= 100) {
                 p.chakra = 0;
                 ball.super = true;
-                let dir = (p === p1) ? 1 : -1;
+                let dir = (team1.includes(p)) ? 1 : -1;
                 ball.vx = dir * 22;
                 ball.vy = -6;
                 createExplosion(ball.x, ball.y, p.shirtColor);
@@ -277,8 +291,8 @@ HTML
 
         function buildCharGrid() {
             charGrid.innerHTML = "";
-            selectTitle.innerText = gameMode === 1 || gameMode === 3 ? "QAHRAMONINGIZNI TANLANG" : (selectStep === 1 ? "1-O'YINCHI QAHRAMONI" : "2-O'YINCHI QAHRAMONI");
-            characters.forEach(char => {
+            selectTitle.innerText = gameMode === 1 || gameMode === 3 ? "SARDOR QAHRAMONNI TANLANG" : (selectStep === 1 ? "1-JAMOASINING SARDORI" : "2-JAMOASINING SARDORI");
+            availableChars.forEach(char => {
                 let btn = document.createElement("button");
                 btn.className = "char-btn";
                 btn.style.background = `linear-gradient(135deg, ${char.shirtColor}, #0f172a)`;
@@ -290,34 +304,55 @@ HTML
 
         function chooseCharacter(char) {
             if (gameMode === 1) {
-                p1 = { ...p1, shirtColor: char.shirtColor, hairColor: char.hairColor, name: char.name, chakra: 100 };
-                let botChars = characters.filter(c => c.name !== char.name);
-                let randomBot = botChars[Math.floor(Math.random() * botChars.length)];
-                p2 = { ...p2, shirtColor: randomBot.shirtColor, hairColor: randomBot.hairColor, name: randomBot.name, chakra: 100 };
+                // 1-jamoani yaratish (Sardor tanlangan char, qolgan 4 tasi tasodifiy botlar)
+                team1 = createTeam(char, "#f97316");
+                let remaining = availableChars.filter(c => c.name !== char.name);
+                let botCaptain = remaining[Math.floor(Math.random() * remaining.length)];
+                team2 = createTeam(botCaptain, "#3b82f6");
+                activeP1 = 0; activeP2 = 0;
                 startNinjaGame();
             } else if (gameMode === 2) {
                 if (selectStep === 1) {
-                    p1 = { ...p1, shirtColor: char.shirtColor, hairColor: char.hairColor, name: char.name, chakra: 100 };
+                    team1 = createTeam(char, "#f97316");
                     selectStep = 2; buildCharGrid();
                 } else {
-                    p2 = { ...p2, shirtColor: char.shirtColor, hairColor: char.hairColor, name: char.name, chakra: 100 };
+                    team2 = createTeam(char, "#3b82f6");
+                    activeP1 = 0; activeP2 = 0;
                     startNinjaGame();
                 }
             } else if (gameMode === 3) {
-                p1 = { ...p1, shirtColor: char.shirtColor, hairColor: char.hairColor, name: char.name, chakra: 100 };
+                team1 = createTeam(char, "#f97316");
                 setupTournamentMatch();
             }
+        }
+
+        function createTeam(captainChar, defaultColor) {
+            let team = [];
+            // 1-o'yinchi (Sardor)
+            team.push({ x: 100, y: 250, r: 26, w: 24, h: 28, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: captainChar.name, chakra: 100, anim: 0 });
+            
+            // Qolgan 4 ta o'yinchi maydonga joylashtiriladi
+            let otherChars = availableChars.filter(c => c.name !== captainChar.name);
+            for (let i = 0; i < 4; i++) {
+                let rnd = otherChars[Math.floor(Math.random() * otherChars.length)];
+                team.push({
+                    x: 60 + i * 55, y: 250, r: 24, w: 22, h: 26, vx: 0, vy: 0,
+                    shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0
+                });
+            }
+            return team;
         }
 
         function setupTournamentMatch() {
             charSelectMenu.style.display = 'none';
             tournamentModal.style.display = 'flex';
-            let botChars = characters.filter(c => c.name !== p1.name);
-            let randomBot = botChars[Math.floor(Math.random() * botChars.length)];
-            p2 = { ...p2, shirtColor: randomBot.shirtColor, hairColor: randomBot.hairColor, name: randomBot.name, chakra: 100 };
+            let remaining = availableChars.filter(c => c.name !== team1[0].name);
+            let botCaptain = remaining[Math.floor(Math.random() * remaining.length)];
+            team2 = createTeam(botCaptain, "#3b82f6");
+            activeP1 = 0; activeP2 = 0;
 
             let stageTitle = tournamentStage === 1 ? "1/4 FINAL" : (tournamentStage === 2 ? "YARIM FINAL" : "🔥 KATTA FINAL 🔥");
-            bracketText.innerHTML = `<b>BOSHQICH: ${stageTitle}</b><br><br><span style="color:${p1.shirtColor}">${p1.name}</span> VS <span style="color:${p2.shirtColor}">${p2.name}</span>`;
+            bracketText.innerHTML = `<b>BOSHQICH: ${stageTitle}</b><br><br><span style="color:${team1[0].shirtColor}">${team1[0].name} (Sardor)</span> jamoasi VS <span style="color:${team2[0].shirtColor}">${team2[0].name} (Sardor)</span> jamoasi`;
         }
 
         function startTournamentMatch() {
@@ -333,8 +368,7 @@ HTML
             timerInterval = setInterval(() => {
                 if (gameRunning) {
                     timeLeft--;
-                    if (p1.chakra < 100) p1.chakra += 5;
-                    if (p2.chakra < 100) p2.chakra += 5;
+                    [...team1, ...team2].forEach(p => { if (p.chakra < 100) p.chakra += 3; });
                     if (timeLeft <= 0) endGame();
                 }
             }, 1000);
@@ -346,10 +380,10 @@ HTML
         function handleWinNext() {
             if (gameMode === 3 && score1 > score2) {
                 if (tournamentStage < 3) {
-                    tournamentStage++; // Keyingi bosqichga o'tish (1/4 ➔ Yarim final ➔ Final)
+                    tournamentStage++;
                     setupTournamentMatch();
                 } else {
-                    returnToMenu(); // Kubokni olgach menyuga qaytish
+                    returnToMenu();
                 }
             } else {
                 restartGame();
@@ -364,32 +398,31 @@ HTML
                 if (gameMode === 3) {
                     if (tournamentStage < 3) {
                         winTitle.innerText = "🎉 G'ALABA!";
-                        winText.innerText = `${p1.name} navbatdagi bosqichga o'tdi!`;
-                        nextBtn.innerText = "➡️ KEYINGI O'YIN (BOSHQICH)";
+                        winText.innerText = `Jamoangiz navbatdagi bosqichga o'tdi!`;
+                        nextBtn.innerText = "➡️ KEYINGI BOSHQICH";
                     } else {
                         winTitle.innerText = "🏆 NINJA CUP CHEMPIONI! 🏆";
-                        winText.innerText = `🌟 TABRIKLAYMIZ! 🌟\n${p1.name} Katta Finalda g'olib bo'lib, Kubokni qo'lga kiritdi! 🏆`;
+                        winText.innerText = `🌟 TABRIKLAYMIZ! 🌟\nSizning jamoangiz Katta Finalda g'olib bo'ldi! 🏆`;
                         nextBtn.innerText = "🏠 MENYUGA QAYTISH";
                     }
                 } else {
                     winTitle.innerText = "🏆 WINNER!";
-                    winText.innerText = `${p1.name} G'olib Bo'ldi!\nHisob: ${score1} : ${score2}`;
+                    winText.innerText = `1-Jamoa G'olib Bo'ldi!\nHisob: ${score1} : ${score2}`;
                     nextBtn.innerText = "🔄 QAYTA O'YNASH";
                 }
                 winTitle.style.color = "#facc15";
-                winText.style.color = p1.shirtColor;
+                winText.style.color = team1[0].shirtColor;
                 createExplosion(350, 200, "#facc15");
             } else if (score2 > score1) {
                 if (gameMode === 1 || gameMode === 3) {
                     winTitle.innerText = "❌ YUTQAZDINGIZ!";
                     winTitle.style.color = "#ef4444";
-                    winText.innerText = `Turnirdan chiqib ketdingiz!\nBot (${p2.name}) yutdi: ${score2} : ${score1}`;
-                    winText.style.color = "#ef4444";
+                    winText.innerText = `Turnirdan chiqib ketdingiz!\nRaقیb jamoa yutdi: ${score2} : ${score1}`;
                     nextBtn.innerText = "🔄 QAYTA URINIB KO'RISH";
                 } else {
                     winTitle.innerText = "🏆 WINNER!";
                     winTitle.style.color = "#facc15";
-                    winText.innerText = `${p2.name} G'olib Bo'ldi!\nHisob: ${score2} : ${score1}`;
+                    winText.innerText = `2-Jamoa G'olib Bo'ldi!\nHisob: ${score2} : ${score1}`;
                     nextBtn.innerText = "🔄 QAYTA O'YNASH";
                 }
             } else {
@@ -408,59 +441,74 @@ HTML
         }
 
         function resetPositions() {
-            p1.x = 100; p1.y = 250; p1.vx = 0; p1.vy = 0;
-            p2.x = 560; p2.y = 250; p2.vx = 0; p2.vy = 0;
+            team1.forEach((p, i) => { p.x = 40 + i * 50; p.y = 250; p.vx = 0; p.vy = 0; });
+            team2.forEach((p, i) => { p.x = 450 + i * 50; p.y = 250; p.vx = 0; p.vy = 0; });
             ball.x = 350; ball.y = 100; ball.vx = 0; ball.vy = 0; ball.super = false;
         }
 
         function update() {
             if (!gameRunning) return;
 
-            if (keys["KeyA"] || keys["a"] || tState.left) p1.vx = -5;
-            else if (keys["KeyD"] || keys["d"] || tState.right) p1.vx = 5;
-            else p1.vx = 0;
-            if ((keys["KeyW"] || keys["w"] || tState.jump) && p1.y >= 250) p1.vy = -13;
-
-            if (gameMode === 2) {
-                if (keys["KeyJ"] || keys["j"]) p2.vx = -5;
-                else if (keys["KeyL"] || keys["l"]) p2.vx = 5;
-                else p2.vx = 0;
-                if ((keys["KeyI"] || keys["i"]) && p2.y >= 250) p2.vy = -13;
-            } else {
-                if (ball.x > p2.x + 15) p2.vx = 3.6;
-                else if (ball.x < p2.x - 15) p2.vx = -3.6;
-                else p2.vx = 0;
-                if (ball.y < p2.y && p2.y >= 250 && Math.random() < 0.04) p2.vy = -12;
-                if (p2.chakra >= 100 && Math.abs(ball.x - p2.x) < 80) triggerSuper(p2);
-            }
-
-            [p1, p2].forEach(p => {
-                p.vy += 0.6; p.y += p.vy; p.x += p.vx;
-                if (p.vx !== 0) p.anim += 0.25; else p.anim = 0;
-                if (p.y > 250) { p.y = 250; p.vy = 0; }
-                if (p.x < 15) p.x = 15; if (p.x > 665) p.x = 665;
+            // 1-Jamoa boshqarvi (Aktiv o'yinchi klaviaturadan boshqariladi, qolganlari to'pga qarab yuguradi)
+            team1.forEach((p, i) => {
+                if (i === activeP1) {
+                    if (keys["KeyA"] || keys["a"] || tState.left) p.vx = -5;
+                    else if (keys["KeyD"] || keys["d"] || tState.right) p.vx = 5;
+                    else p.vx = 0;
+                    if ((keys["KeyW"] || keys["w"] || tState.jump) && p.y >= 250) p.vy = -13;
+                } else {
+                    // Bot o'yinchilar avtomatik harakati
+                    if (ball.x > p.x + 20) p.vx = 2.5;
+                    else if (ball.x < p.x - 20) p.vx = -2.5;
+                    else p.vx = 0;
+                    if (ball.y < p.y && p.y >= 250 && Math.random() < 0.02) p.vy = -11;
+                }
             });
 
-            if (p1.x > 310) p1.x = 310;
-            if (p2.x < 350) p2.x = 350;
+            // 2-Jamoa boshqaruvi (Agar 2 kishilik bo'lsa activeP2, yo'sa hammasi bot)
+            team2.forEach((p, i) => {
+                if (gameMode === 2 && i === activeP2) {
+                    if (keys["KeyJ"] || keys["j"]) p.vx = -5;
+                    else if (keys["KeyL"] || keys["l"]) p.vx = 5;
+                    else p.vx = 0;
+                    if ((keys["KeyI"] || keys["i"]) && p.y >= 250) p.vy = -13;
+                } else {
+                    if (ball.x > p.x + 15) p.vx = 2.8;
+                    else if (ball.x < p.x - 15) p.vx = -2.8;
+                    else p.vx = 0;
+                    if (ball.y < p.y && p.y >= 250 && Math.random() < 0.025) p.vy = -11;
+                    if (p.chakra >= 100 && Math.abs(ball.x - p.x) < 70) triggerSuper(p);
+                }
+            });
 
-            let p1HeadX = p1.x + p1.w/2, p1HeadY = p1.y + 12;
-            let p1Dist = Math.hypot(ball.x - p1HeadX, ball.y - p1HeadY);
-            if (p1Dist < ball.r + p1.r) {
-                ball.super = false;
-                if (keys["KeyS"] || keys["s"] || tState.pass) { ball.vx = 8.5; ball.vy = -5; }
-                else if (keys["KeyE"] || keys["e"] || tState.shot) { ball.vx = 16; ball.vy = -9.5; }
-                else { ball.vx = (ball.x - p1HeadX) * 0.35 + p1.vx * 0.5; ball.vy = (ball.y - p1HeadY) * 0.35; }
-            }
+            // Fizika va gravitatsiya
+            [...team1, ...team2].forEach(p => {
+                p.vy += 0.6; p.y += p.vy; p.x += p.vx;
+                if (p.vx !== 0) p.anim += 0.2; else p.anim = 0;
+                if (p.y > 250) { p.y = 250; p.vy = 0; }
+                if (p.x < 15) p.x = 15; if (p.x > 675) p.x = 675;
+            });
 
-            let p2HeadX = p2.x + p2.w/2, p2HeadY = p2.y + 12;
-            let p2Dist = Math.hypot(ball.x - p2HeadX, ball.y - p2HeadY);
-            if (p2Dist < ball.r + p2.r) {
-                ball.super = false;
-                if (keys["KeyK"] || keys["k"]) { ball.vx = -8.5; ball.vy = -5; }
-                else if (keys["KeyO"] || keys["o"]) { ball.vx = -16; ball.vy = -9.5; }
-                else { ball.vx = (ball.x - p2HeadX) * 0.35 + p2.vx * 0.5; ball.vy = (ball.y - p2HeadY) * 0.35; }
-            }
+            // To'qnashuv va zarbalar
+            [...team1, ...team2].forEach((p, idx) => {
+                let headX = p.x + p.w/2, headY = p.y + 10;
+                let dist = Math.hypot(ball.x - headX, ball.y - headY);
+                if (dist < ball.r + p.r) {
+                    ball.super = false;
+                    let isTeam1 = idx < 5;
+                    let passKey = isTeam1 ? (keys["KeyS"] || keys["s"] || tState.pass) : false;
+                    let shotKey = isTeam1 ? (keys["KeyE"] || keys["e"] || tState.shot) : true;
+                    
+                    if (passKey) {
+                        ball.vx = isTeam1 ? 8.5 : -8.5; ball.vy = -5;
+                    } else if (shotKey) {
+                        ball.vx = isTeam1 ? 15 : -15; ball.vy = -9;
+                    } else {
+                        ball.vx = (ball.x - headX) * 0.4 + p.vx * 0.5;
+                        ball.vy = (ball.y - headY) * 0.4;
+                    }
+                }
+            });
 
             ball.vy += 0.45; ball.x += ball.vx; ball.y += ball.vy;
 
@@ -472,6 +520,7 @@ HTML
             if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy *= -0.8; }
             if (ball.y + ball.r > 350) { ball.y = 350 - ball.r; ball.vy *= -0.7; ball.vx *= 0.95; }
 
+            // Gol urilishi
             if (ball.x - ball.r < 50 && ball.y > 210) {
                 score2++; createExplosion(ball.x, ball.y, "#ef4444"); resetPositions();
             }
@@ -507,53 +556,41 @@ HTML
             ctx.beginPath(); ctx.arc(350, 175, 45, 0, Math.PI * 2); ctx.stroke();
         }
 
-        function drawHeadPlayer(p, isP1) {
+        function drawHeadPlayer(p, isActive, isTeam1) {
             let cx = p.x + p.w / 2;
             let cy = p.y;
-            let swing = Math.sin(p.anim) * 10;
+            let swing = Math.sin(p.anim) * 8;
 
+            // Oyoqlar
             ctx.fillStyle = "#1e293b";
-            ctx.fillRect(cx - 10 + swing, cy + 62, 8, 10);
-            ctx.fillRect(cx + 2 - swing, cy + 62, 8, 10);
+            ctx.fillRect(cx - 8 + swing, cy + 54, 6, 8);
+            ctx.fillRect(cx + 2 - swing, cy + 54, 6, 8);
 
+            // Tana
             ctx.fillStyle = p.shirtColor;
-            ctx.fillRect(cx - 14, cy + 34, 28, 28);
-            
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(cx - 6, cy + 34, 12, 6);
+            ctx.fillRect(cx - 12, cy + 30, 24, 24);
 
-            ctx.fillStyle = p.shirtColor;
-            ctx.fillRect(cx - 22 + swing/2, cy + 38, 8, 16);
-            ctx.fillRect(cx + 14 - swing/2, cy + 38, 8, 16);
-
+            // Bosh (Head)
             ctx.fillStyle = "#ffedd5";
-            ctx.beginPath();
-            ctx.roundRect(cx - 24, cy - 12, 48, 44, 10);
-            ctx.fill();
-            ctx.strokeStyle = "#000"; ctx.lineWidth = 1.5;
-            ctx.stroke();
+            ctx.beginPath(); ctx.roundRect(cx - 20, cy - 10, 40, 40, 8); ctx.fill();
+            ctx.strokeStyle = isActive ? "#facc15" : "#000"; ctx.lineWidth = isActive ? 3 : 1.5; ctx.stroke();
 
+            // Soch
             ctx.fillStyle = p.hairColor;
-            ctx.beginPath();
-            ctx.roundRect(cx - 26, cy - 18, 52, 20, [10, 10, 4, 4]);
-            ctx.fill();
+            ctx.beginPath(); ctx.roundRect(cx - 22, cy - 15, 44, 16, [8, 8, 2, 2]); ctx.fill();
 
-            ctx.fillStyle = "#334155";
-            ctx.fillRect(cx - 24, cy - 4, 48, 8);
-            ctx.fillStyle = "#cbd5e1";
-            ctx.fillRect(cx - 6, cy - 3, 12, 6);
-            ctx.fillStyle = "#000";
-            ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill();
+            // Peshonabog' va aktiv belgi (Uchburchak strelka)
+            if (isActive) {
+                ctx.fillStyle = "#facc15";
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - 22); ctx.lineTo(cx - 6, cy - 30); ctx.lineTo(cx + 6, cy - 30);
+                ctx.fill();
+            }
 
-            let eyeX = isP1 ? cx + 8 : cx - 8;
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(eyeX - 5, cy + 10, 10, 12);
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(eyeX + (isP1 ? 1 : -3), cy + 13, 5, 6);
-
-            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 22, cy - 32, 44, 6);
+            // Chakra Bar
+            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 18, cy - 38, 36, 5);
             ctx.fillStyle = p.chakra >= 100 ? "#facc15" : "#3b82f6";
-            ctx.fillRect(cx - 22, cy - 32, (p.chakra / 100) * 44, 6);
+            ctx.fillRect(cx - 18, cy - 38, (p.chakra / 100) * 36, 5);
         }
 
         function draw() {
@@ -575,12 +612,9 @@ HTML
             ctx.fillStyle = "#38bdf8"; ctx.font = "bold 16px Trebuchet MS";
             ctx.fillText(`⏱️ 00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`, 350, 20);
 
-            ctx.font = "bold 13px Trebuchet MS";
-            ctx.fillStyle = p1.shirtColor; ctx.fillText(p1.name, 120, 25);
-            ctx.fillStyle = p2.shirtColor; ctx.fillText(p2.name, 580, 25);
-
-            drawHeadPlayer(p1, true);
-            drawHeadPlayer(p2, false);
+            // Jamoaning 5 ta o'yinchisini chizish
+            team1.forEach((p, i) => drawHeadPlayer(p, i === activeP1, true));
+            team2.forEach((p, i) => drawHeadPlayer(p, i === activeP2, false));
             
             ctx.shadowBlur = ball.super ? 20 : 10;
             ctx.shadowColor = ball.super ? "#ef4444" : "#facc15";
