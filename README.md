@@ -2,13 +2,13 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ninja Soccer - Original 1v1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ninja Hard Soccer 1v1 - Ultimate Edition</title>
     <style>
         body {
             margin: 0;
-            background: linear-gradient(135deg, #111, #222);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0c20;
+            font-family: 'Arial Black', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -16,287 +16,287 @@
             height: 100vh;
             color: white;
             overflow: hidden;
+            user-select: none;
         }
-        #scoreBoard {
+
+        /* 1. Kirish Ekrani (Splash Screen - 5 sekund) */
+        #splashScreen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #241442 0%, #090514 100%);
             display: flex;
-            gap: 30px;
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 10px 30px;
-            border-radius: 30px;
-            border: 2px solid #ff007f;
-            box-shadow: 0 0 15px #ff007f;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
         }
-        .score-box {
+        .splash-banner {
+            width: 85%;
+            max-width: 650px;
+            background: linear-gradient(135deg, #120c1f, #251b40);
+            border: 4px solid #00f0ff;
+            box-shadow: 0 0 30px #00f0ff;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+        .splash-title {
+            font-size: 38px;
+            color: #fff;
+            text-shadow: 0 0 15px #ff0055, 3px 3px 0 #000;
+            margin: 0 0 20px 0;
+            letter-spacing: 2px;
+        }
+        .splash-vs-art {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .ninja-face {
+            width: 100px;
+            height: 100px;
+            border: 4px solid #fff;
+            border-radius: 15px;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
         }
-        #playerScore { color: #00f0ff; }
-        #botScore { color: #ff007f; }
-        canvas {
-            background: linear-gradient(to bottom, #112233, #224411); /* Kechki stadion ko'rinishi */
-            border: 4px solid #fff;
-            box-shadow: 0px 0px 30px rgba(0, 240, 255, 0.3);
+        .n-orange { background: #ff9900; box-shadow: 0 0 15px #ff9900; color: #000; }
+        .s-blue { background: #2e3b8f; box-shadow: 0 0 15px #2e3b8f; color: #fff; }
+        .chakra-ball-art {
+            width: 70px;
+            height: 70px;
+            background: #fff;
+            border: 4px solid #000;
+            border-radius: 50%;
+            box-shadow: 0 0 25px #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 12px;
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* 2. Bosh Menyu va 10 ta Qahramon Tanlash */
+        #menuContainer {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #130f26;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+        .menu-title {
+            font-size: 28px;
+            text-shadow: 0 0 10px #ff0055;
+            margin-bottom: 15px;
+        }
+        .mode-selection {
+            margin-bottom: 20px;
+        }
+        .mode-btn {
+            background: #211c42;
+            color: white;
+            border: 2px solid #00f0ff;
+            padding: 10px 25px;
+            font-size: 16px;
+            margin: 0 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .mode-btn.active {
+            background: #00f0ff;
+            color: #000;
+            box-shadow: 0 0 15px #00f0ff;
+        }
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+            max-width: 650px;
+            width: 90%;
+        }
+        .char-card {
+            background: #1c163a;
+            border: 3px solid #3d356b;
             border-radius: 12px;
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .hint {
+        .char-card.selected-p1 { border-color: #ff9900; box-shadow: 0 0 15px #ff9900; }
+        .char-card.selected-p2 { border-color: #00f0ff; box-shadow: 0 0 15px #00f0ff; }
+        .char-name { font-size: 12px; margin-top: 6px; }
+
+        .start-game-btn {
+            background: #ff0055;
+            color: white;
+            border: 3px solid #fff;
+            padding: 12px 45px;
+            font-size: 22px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #990033;
+        }
+        .start-game-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #990033; }
+
+        /* 3. O'yin oynasi va Maydon */
+        #gameWrapper {
+            display: none;
+            position: relative;
+            flex-direction: column;
+            align-items: center;
+        }
+        #scoreBoard {
+            font-size: 24px;
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 25px;
+            border-radius: 20px;
+            border: 2px solid #333;
+        }
+        canvas {
+            background: linear-gradient(to bottom, #161233, #1e3d23);
+            border: 5px solid #fff;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+        }
+
+        /* 4. Sensorli tugmalar */
+        #touchControls {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            justify-content: space-between;
             margin-top: 15px;
-            font-size: 14px;
-            color: #00f0ff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px #00f0ff;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .nav-group, .action-group { display: flex; gap: 20px; }
+        .touch-btn {
+            width: 65px;
+            height: 65px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: white;
+        }
+        .touch-btn:active { background: rgba(255, 255, 255, 0.5); }
+
+        /* 5. Defeat / Victory Oynasi */
+        #overlayScreen {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 3, 13, 0.9);
+            z-index: 50;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #overlayText {
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 25px;
+            letter-spacing: 3px;
         }
     </style>
 </head>
 <body>
 
-    <div id="scoreBoard">
-        <div class="score-box">NINJA (Siz): <span id="playerScore">0</span></div>
-        <div>VS</div>
-        <div class="score-box">SAMURAY (Bot): <span id="botScore">0</span></div>
+    <!-- 1. Kirish Splash ekrani (5 soniya ko'rsatiladi) -->
+    <div id="splashScreen">
+        <div class="splash-banner">
+            <h1 class="splash-title">NINJA HARD SOCCER</h1>
+            <div class="splash-vs-art">
+                <div class="ninja-face n-orange">NARUTO</div>
+                <div class="chakra-ball-art">⚽<br>CHAKRA</div>
+                <div class="ninja-face s-blue">SASUKE</div>
+            </div>
+            <div style="color: #888; font-size: 14px; margin-top: 15px;">Yuklanmoqda...</div>
+        </div>
     </div>
-    
-    <canvas id="ninjaCanvas" width="900" height="450"></canvas>
-    
-    <div class="hint">
-        <b>Boshqarish:</b> Chap/O'ng o'qlari yoki <b>A, D</b> — Harakatlanish | Tepaga o'q yoki <b>W</b> — Sakrash
+
+    <!-- 2. Bosh o'yin menyusi (10 ta qahramonlik grid) -->
+    <div id="menuContainer">
+        <h1 class="menu-title">QAHRAMONNI TANLANG</h1>
+        
+        <div class="mode-selection">
+            <button class="mode-btn active" id="mode1P" onclick="setMode('1P')">1P (Botga qarshi)</button>
+            <button class="mode-btn" id="mode2P" onclick="setMode('2P')">2P (Do'st bilan)</button>
+        </div>
+
+        <div class="char-grid" id="charactersContainer">
+            <!-- Dinamik 10 ta qahramon JavaScript orqali yuklanadi -->
+        </div>
+
+        <button class="start-game-btn" onclick="initGame()">O'YINNI BOSHLASH</button>
+    </div>
+
+    <!-- 3. O'yin oynasi -->
+    <div id="gameWrapper">
+        <div id="scoreBoard">
+            <span id="p1Label" style="color:#ff9900">P1</span>: <span id="p1Score">0</span> 
+            | 
+            <span id="p2Label" style="color:#00f0ff">P2</span>: <span id="p2Score">0</span>
+        </div>
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+        
+        <!-- Sensorli ekran elementlari -->
+        <div id="touchControls">
+            <div class="nav-group">
+                <div class="touch-btn" id="tLeft">←</div>
+                <div class="touch-btn" id="tRight">→</div>
+            </div>
+            <div class="action-group">
+                <div class="touch-btn" id="tJump">↑</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Natija ekrani -->
+    <div id="overlayScreen">
+        <div id="overlayText">DEFEAT<br>Yutqazdingiz!</div>
+        <button class="start-game-btn" onclick="backToMenu()">KAYTA TANLASH</button>
     </div>
 
     <script>
-        const canvas = document.getElementById("ninjaCanvas");
+        // 5 soniyadan keyin splash ekranni yopish va menyuni ochish
+        setTimeout(() => {
+            const splash = document.getElementById("splashScreen");
+            splash.style.opacity = 0;
+            setTimeout(() => {
+                splash.style.display = "none";
+                document.getElementById("menuContainer").style.display = "flex";
+            }, 500);
+        }, 5000);
+
+        const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        let pScore = 0;
-        let bScore = 0;
+        let currentMode = '1P';
+        let selectedP1Index = 0;
+        let selectedP2Index = 1;
 
-        const gravity = 0.6;
-
-        // Ninja (O'yinchi)
-        const ninja = {
-            x: 150,
-            y: 350,
-            radius: 25,
-            vx: 0,
-            vy: 0,
-            speed: 6,
-            jumpForce: -13,
-            isGrounded: false,
-            color: "#00f0ff"
-        };
-
-        // Samuray (Bot)
-        const bot = {
-            x: 750,
-            y: 350,
-            radius: 25,
-            vx: 0,
-            vy: 0,
-            speed: 5,
-            jumpForce: -13,
-            isGrounded: false,
-            color: "#ff007f"
-        };
-
-        // Koptok
-        const ball = {
-            x: 450,
-            y: 150,
-            radius: 16,
-            vx: 0,
-            vy: 0,
-            bounce: 0.75,
-            gravity: 0.4,
-            friction: 0.99
-        };
-
-        // Darvozalar o'lchami va pozitsiyasi
-        const goalW = 20;
-        const goalH = 160;
-        const leftGoal = { x: 0, y: 450 - goalH, w: goalW, h: goalH };
-        const rightGoal = { x: 900 - goalW, y: 450 - goalH, w: goalW, h: goalH };
-
-        const keys = {};
-        window.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
-        window.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
-
-        function resetRound() {
-            ninja.x = 150; ninja.y = 350; ninja.vx = 0; ninja.vy = 0;
-            bot.x = 750; bot.y = 350; bot.vx = 0; bot.vy = 0;
-            ball.x = 450; ball.y = 150; ball.vx = 0; ball.vy = 0;
-        }
-
-        function resolveCollision(player, ballObj) {
-            let dx = ballObj.x - player.x;
-            let dy = ballObj.y - player.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < player.radius + ballObj.radius) {
-                // To'qnashuv yo'nalishini aniqlash va koptokni siljitish
-                let overlap = (player.radius + ballObj.radius) - distance;
-                ballObj.x += (dx / distance) * overlap;
-                ballObj.y += (dy / distance) * overlap;
-
-                // Dinamik tepish kuchi va fizika hisobi
-                let speed = Math.sqrt(player.vx * player.vx + player.vy * player.vy) + 7;
-                ballObj.vx = (dx / distance) * speed;
-                ballObj.vy = (dy / distance) * speed - 2; // Tepaga biroz yo'nalish berish
-            }
-        }
-
-        function update() {
-            // Ninja boshqaruvi (A, D, W yoki O'qlar)
-            if (keys["a"] || keys["arrowleft"]) ninja.vx = -ninja.speed;
-            else if (keys["d"] || keys["arrowright"]) ninja.vx = ninja.speed;
-            else ninja.vx = 0;
-
-            if ((keys["w"] || keys["arrowup"]) && ninja.isGrounded) {
-                ninja.vy = ninja.jumpForce;
-                ninja.isGrounded = false;
-            }
-
-            // Fizika va gravitatsiya - Ninja
-            ninja.vy += gravity;
-            ninja.x += ninja.vx;
-            ninja.y += ninja.vy;
-
-            // Chegaralar - Ninja
-            if (ninja.y >= 450 - ninja.radius) {
-                ninja.y = 450 - ninja.radius;
-                ninja.vy = 0;
-                ninja.isGrounded = true;
-            }
-            ninja.x = Math.max(ninja.radius + goalW, Math.min(900 - ninja.radius - goalW, ninja.x));
-
-            // Kuchaytirilgan AI (Bot) Mantiqi
-            let distToBall = ball.x - bot.x;
-            if (Math.abs(distToBall) < 250) {
-                if (ball.x < bot.x) bot.vx = -bot.speed;
-                else bot.vx = bot.speed;
-
-                // Agar koptok balandda va yaqin bo'lsa sakrash
-                if (ball.y < bot.y - 40 && Math.abs(distToBall) < 80 && bot.isGrounded) {
-                    bot.vy = bot.jumpForce;
-                    bot.isGrounded = false;
-                }
-            } else {
-                // Pozitsiyasini markazroqqa to'g'irlash
-                if (bot.x < 700) bot.vx = bot.speed;
-                else if (bot.x > 750) bot.vx = -bot.speed;
-                else bot.vx = 0;
-            }
-
-            // Fizika va gravitatsiya - Bot
-            bot.vy += gravity;
-            bot.x += bot.vx;
-            bot.y += bot.vy;
-
-            if (bot.y >= 450 - bot.radius) {
-                bot.y = 450 - bot.radius;
-                bot.vy = 0;
-                bot.isGrounded = true;
-            }
-            bot.x = Math.max(bot.radius + goalW, Math.min(900 - bot.radius - goalW, bot.x));
-
-            // Koptok Harakati va Fizikasi
-            ball.vy += ball.gravity;
-            ball.vx *= ball.friction;
-            ball.x += ball.vx;
-            ball.y += ball.vy;
-
-            // Devor va pol to'qnashuvi - Koptok
-            if (ball.y >= 450 - ball.radius) {
-                ball.y = 450 - ball.radius;
-                ball.vy = -ball.vy * ball.bounce;
-            }
-            if (ball.y <= ball.radius) {
-                ball.y = ball.radius;
-                ball.vy = -ball.vy * ball.bounce;
-            }
-
-            // Chap tomondagi darvoza va uning ustuni
-            if (ball.x <= goalW + ball.radius) {
-                if (ball.y > leftGoal.y) {
-                    bScore++;
-                    document.getElementById("botScore").innerText = bScore;
-                    resetRound();
-                } else {
-                    ball.x = goalW + ball.radius;
-                    ball.vx = -ball.vx * ball.bounce;
-                }
-            }
-
-            // O'ng tomondagi darvoza va uning ustuni
-            if (ball.x >= 900 - goalW - ball.radius) {
-                if (ball.y > rightGoal.y) {
-                    pScore++;
-                    document.getElementById("playerScore").innerText = pScore;
-                    resetRound();
-                } else {
-                    ball.x = 900 - goalW - ball.radius;
-                    ball.vx = -ball.vx * ball.bounce;
-                }
-            }
-
-            // To'qnashuvlarni tekshirish va ishga tushirish
-            resolveCollision(ninja, ball);
-            resolveCollision(bot, ball);
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, 900, 450);
-
-            // Stadion maydoni o'rtasidagi neon chiziqlar
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
-            ctx.lineWidth = 5;
-            ctx.beginPath();
-            ctx.moveTo(450, 0);
-            ctx.lineTo(450, 450);
-            ctx.stroke();
-
-            // Chap Darvoza (Neon yashil/oq)
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(leftGoal.x, leftGoal.y, leftGoal.w, leftGoal.h);
-            
-            // O'ng Darvoza
-            ctx.fillRect(rightGoal.x, rightGoal.y, rightGoal.w, rightGoal.h);
-
-            // Ninja chizish (Ko'z qismi effekti bilan)
-            ctx.fillStyle = ninja.color;
-            ctx.beginPath();
-            ctx.arc(ninja.x, ninja.y, ninja.radius, 0, Math.PI * 2);
-            ctx.fill();
-            // Ninja tasmasi (maska effekti)
-            ctx.fillStyle = "#111";
-            ctx.fillRect(ninja.x - 15, ninja.y - 8, 30, 8);
-
-            // Samuray botini chizish
-            ctx.fillStyle = bot.color;
-            ctx.beginPath();
-            ctx.arc(bot.x, bot.y, bot.radius, 0, Math.PI * 2);
-            ctx.fill();
-            // Samuray ko'z qismi
-            ctx.fillStyle = "#111";
-            ctx.fillRect(bot.x - 15, bot.y - 8, 30, 8);
-
-            // Koptokni chizish (Futbol dizayni elementlari)
-            ctx.fillStyle = "#fff";
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = "#111";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        }
-
-        function loop() {
-            update();
-            draw();
-            requestAnimationFrame(loop);
-        }
-
-
-            
+        // 10 ta eng mashhur va zo'r qahramonlar ma'lumotlar bazasi
+        const heroDatabase = [
+            { name: "Naruto", body: "#ff9900", head: "#fcc", hair: "#ffee00", eye: "#00aaff" },
