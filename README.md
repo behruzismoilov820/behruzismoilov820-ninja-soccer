@@ -8,7 +8,7 @@ HTML
     <style>
         * { box-sizing: border-box; touch-action: manipulation; }
         body {
-            margin: 0; padding: 10px;
+            margin: 0; padding: 5px;
             background: #020617; color: #fff;
             font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
             display: flex; flex-direction: column;
@@ -18,19 +18,19 @@ HTML
 
         #gameContainer {
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-            padding: 15px; border-radius: 24px;
+            padding: 10px; border-radius: 20px;
             border: 2px solid rgba(251, 191, 36, 0.4);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(234, 179, 8, 0.2);
             display: flex; flex-direction: column; align-items: center;
-            width: 100%; max-width: 860px; position: relative;
+            width: 100%; max-width: 980px; position: relative;
         }
 
         #splashScreen {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; height: 420px; text-align: center;
+            width: 100%; height: 380px; text-align: center;
         }
         #splashScreen img {
-            max-width: 100%; max-height: 370px; border-radius: 18px;
+            max-width: 100%; max-height: 320px; border-radius: 18px;
             border: 2px solid rgba(251, 191, 36, 0.6);
             box-shadow: 0 0 25px rgba(0,0,0,0.9);
         }
@@ -38,44 +38,44 @@ HTML
         #ninjaMenu, #charSelectMenu, #tournamentModal { text-align: center; padding: 10px; width: 100%; display: none; }
         
         .btn {
-            display: block; width: 260px; padding: 13px; margin: 10px auto;
-            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: 2px solid #60a5fa; border-radius: 14px;
-            font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.15s ease;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5); box-shadow: 0 6px 0 #1e40af, 0 8px 15px rgba(0,0,0,0.4);
+            display: block; width: 260px; padding: 11px; margin: 8px auto;
+            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: 2px solid #60a5fa; border-radius: 12px;
+            font-size: 15px; font-weight: 900; cursor: pointer; transition: 0.15s ease;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5); box-shadow: 0 5px 0 #1e40af, 0 6px 12px rgba(0,0,0,0.4);
         }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #1e40af; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #1e40af; }
         .btn-green {
             background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
-            border-color: #4ade80; box-shadow: 0 6px 0 #166534;
+            border-color: #4ade80; box-shadow: 0 5px 0 #166534;
         }
         .btn-gold {
             background: linear-gradient(180deg, #eab308 0%, #ca8a04 100%);
-            border-color: #fef08a; box-shadow: 0 6px 0 #854d0e; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            border-color: #fef08a; box-shadow: 0 5px 0 #854d0e; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         .char-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 10px; margin: 12px 0; max-height: 250px;
+            gap: 8px; margin: 10px 0; max-height: 220px;
             overflow-y: auto; padding: 5px;
         }
         .char-btn {
-            display: flex; align-items: center; gap: 10px;
-            padding: 8px 12px; border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 14px; color: white; font-weight: 800;
-            font-size: 13px; cursor: pointer; transition: 0.15s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 10px; border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px; color: white; font-weight: 800;
+            font-size: 12px; cursor: pointer; transition: 0.15s;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
         .char-btn:hover { transform: scale(1.02); border-color: #fff; }
         .char-icon {
-            width: 38px; height: 38px; border-radius: 50%;
+            width: 32px; height: 32px; border-radius: 50%;
             border: 2px solid #fff; background: #fff; object-fit: cover;
         }
 
         .menu-btn {
-            position: absolute; top: 12px; left: 12px;
+            position: absolute; top: 10px; left: 10px;
             background: #ef4444; color: white; border: 2px solid #fca5a5;
-            padding: 6px 12px; font-size: 13px; font-weight: bold;
-            border-radius: 10px; cursor: pointer; display: none; z-index: 10;
+            padding: 5px 10px; font-size: 12px; font-weight: bold;
+            border-radius: 8px; cursor: pointer; display: none; z-index: 10;
         }
 
         #winModal, #tournamentModal {
@@ -83,25 +83,25 @@ HTML
             background: rgba(2, 6, 23, 0.95); border-radius: 20px;
             flex-direction: column; justify-content: center; align-items: center; z-index: 20;
         }
-        #winModal h2 { font-size: 34px; color: #facc15; margin-bottom: 5px; text-shadow: 0 0 15px rgba(250, 204, 21, 0.6); }
-        #winText { font-size: 20px; margin-bottom: 20px; color: #fff; font-weight: 800; text-align: center; line-height: 1.4; }
+        #winModal h2 { font-size: 30px; color: #facc15; margin-bottom: 5px; text-shadow: 0 0 15px rgba(250, 204, 21, 0.6); }
+        #winText { font-size: 18px; margin-bottom: 15px; color: #fff; font-weight: 800; text-align: center; line-height: 1.4; }
 
         canvas {
-            border: 3px solid rgba(251, 191, 36, 0.5); border-radius: 18px;
+            border: 3px solid rgba(251, 191, 36, 0.5); border-radius: 14px;
             background: #0f172a; display: none; width: 100%; height: auto;
-            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
         .touch-controls {
-            display: none; width: 100%; margin-top: 10px;
+            display: none; width: 100%; margin-top: 8px;
             justify-content: space-between; gap: 6px; flex-wrap: wrap;
         }
-        .touch-group { display: flex; gap: 5px; }
+        .touch-group { display: flex; gap: 4px; }
         .t-btn {
             background: #334155; color: white; border: 2px solid rgba(56, 189, 248, 0.5);
-            padding: 10px 14px; font-size: 14px; font-weight: bold;
-            border-radius: 12px; cursor: pointer; user-select: none; outline: none;
-            box-shadow: 0 4px 0 #1e293b;
+            padding: 8px 12px; font-size: 13px; font-weight: bold;
+            border-radius: 10px; cursor: pointer; user-select: none; outline: none;
+            box-shadow: 0 3px 0 #1e293b;
         }
         .t-btn:active { background: #2563eb; transform: translateY(2px); box-shadow: 0 1px 0 #1e293b; }
         .super-btn {
@@ -129,11 +129,11 @@ HTML
         </div>
 
         <div id="ninjaMenu">
-            <h2 style="color: #facc15; font-size: 24px; margin-bottom: 15px;">O'YIN REJIMINI TANLANG (11 vs 11)</h2>
+            <h2 style="color: #facc15; font-size: 22px; margin-bottom: 12px;">O'YIN REJIMINI TANLANG (11 vs 11)</h2>
             <button class="btn" onclick="selectMode(1)">1 KISHI (VS BOT)</button>
             <button class="btn btn-green" onclick="selectMode(2)">2 KISHILIK (2 PLAYER)</button>
             <button class="btn btn-gold" onclick="selectMode(3)">🏆 TURNIR (NINJA CUP)</button>
-            <div style="margin-top: 15px; font-size: 13px; color: #94a3b8; line-height: 1.5;">
+            <div style="margin-top: 10px; font-size: 12px; color: #94a3b8; line-height: 1.4;">
                 <p><b>O'yinchini almashtirish:</b> Tab (PC) yoki "Switch" tugmasi (Mobil)</p>
                 <p><b>Super Zarba:</b> P1 (Q) | P2 (U)</p>
                 <p><b>Boshqaruv:</b> P1 (W,A,D | S:Pass | E:Shot) | P2 (I,J,L | K:Pass | O:Shot)</p>
@@ -141,17 +141,18 @@ HTML
         </div>
 
         <div id="charSelectMenu">
-            <h2 id="selectTitle" style="color: #facc15; margin-bottom: 5px;">SARDOR QAHRAMONNI TANLANG</h2>
+            <h2 id="selectTitle" style="color: #facc15; margin-bottom: 5px; font-size: 20px;">SARDOR QAHRAMONNI TANLANG</h2>
             <div class="char-grid" id="charGrid"></div>
         </div>
 
         <div id="tournamentModal">
             <h2 style="color: #facc15;">🏆 NINJA CUP TURNIRI</h2>
-            <div id="bracketText" style="font-size: 18px; margin: 15px 0; color: #e2e8f0; line-height: 1.6;"></div>
+            <div id="bracketText" style="font-size: 16px; margin: 12px 0; color: #e2e8f0; line-height: 1.5;"></div>
             <button class="btn btn-green" onclick="startTournamentMatch()">⚔️ O'YINNI BOSHLASH</button>
         </div>
 
-        <canvas id="gameCanvas" width="820" height="420"></canvas>
+        <!-- Gorizontal keng maydon: 960x380 -->
+        <canvas id="gameCanvas" width="960" height="380"></canvas>
 
         <div id="winModal">
             <h2 id="winTitle">🏆 G'OLIB!</h2>
@@ -209,7 +210,7 @@ HTML
         let bracketText = document.getElementById('bracketText');
 
         let gameMode = 1;
-        let tournamentStage = 1; // 1: 1/4 Final, 2: Yarim Final, 3: Katta Final
+        let tournamentStage = 1;
         let selectStep = 1;
         let score1 = 0, score2 = 0;
         let timeLeft = 60;
@@ -222,7 +223,7 @@ HTML
         let activeP1 = 0; 
         let activeP2 = 0; 
 
-        let ball = { x: 410, y: 150, r: 12, vx: 0, vy: 0, color: "#facc15", super: false };
+        let ball = { x: 480, y: 140, r: 8, vx: 0, vy: 0, color: "#facc15", super: false };
         let keys = {};
         let tState = { left: false, right: false, jump: false, pass: false, shot: false };
         let gameRunning = false;
@@ -248,20 +249,20 @@ HTML
                 p.chakra = 0;
                 ball.super = true;
                 let dir = (team1.includes(p)) ? 1 : -1;
-                ball.vx = dir * 22;
-                ball.vy = -6;
+                ball.vx = dir * 20;
+                ball.vy = -5;
                 createExplosion(ball.x, ball.y, p.shirtColor);
             }
         }
 
         function createExplosion(x, y, color) {
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < 20; i++) {
                 particles.push({
                     x: x, y: y,
-                    vx: (Math.random() - 0.5) * 12,
-                    vy: (Math.random() - 0.5) * 12,
-                    r: Math.random() * 5 + 2,
-                    color: color, life: 30
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    r: Math.random() * 4 + 1,
+                    color: color, life: 25
                 });
             }
         }
@@ -311,25 +312,25 @@ HTML
 
         function createTeam(captainChar, isLeft) {
             let team = [];
-            let startX = isLeft ? 50 : 500;
+            let startX = isLeft ? 50 : 530;
             let dir = isLeft ? 1 : -1;
 
-            team.push({ x: isLeft ? 30 : 770, y: 270, r: 20, w: 18, h: 22, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
+            team.push({ x: isLeft ? 25 : 930, y: 260, r: 12, w: 12, h: 16, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
 
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
-                team.push({ x: startX + i * 35 * dir, y: 270, r: 18, w: 16, h: 20, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
+                team.push({ x: startX + i * 40 * dir, y: 260, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
             }
 
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
-                team.push({ x: startX + 160 + i * 35 * dir, y: 270, r: 18, w: 16, h: 20, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
+                team.push({ x: startX + 180 + i * 40 * dir, y: 260, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
             }
 
-            team.push({ x: startX + 310 * dir, y: 270, r: 20, w: 18, h: 22, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
+            team.push({ x: startX + 350 * dir, y: 260, r: 12, w: 12, h: 16, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
             
             let rndF = availableChars[Math.floor(Math.random() * availableChars.length)];
-            team.push({ x: startX + 350 * dir, y: 270, r: 18, w: 16, h: 20, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
+            team.push({ x: startX + 390 * dir, y: 260, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
 
             return team;
         }
@@ -403,7 +404,7 @@ HTML
                 }
                 winTitle.style.color = "#facc15";
                 winText.style.color = team1[0].shirtColor;
-                createExplosion(410, 200, "#facc15");
+                createExplosion(480, 190, "#facc15");
             } else if (score2 > score1) {
                 if (gameMode === 1 || gameMode === 3) {
                     winTitle.innerText = "❌ YUTQAZDINGIZ!";
@@ -433,20 +434,20 @@ HTML
 
         function resetPositions() {
             team1.forEach((p, i) => {
-                if(p.role === 'GK') { p.x = 30; p.y = 270; }
-                else if(p.role === 'DEF') { p.x = 100 + (i * 35); p.y = 270; }
-                else if(p.role === 'MID') { p.x = 250 + (i * 30); p.y = 270; }
-                else { p.x = 380 + (i * 20); p.y = 270; }
+                if(p.role === 'GK') { p.x = 25; p.y = 260; }
+                else if(p.role === 'DEF') { p.x = 90 + (i * 40); p.y = 260; }
+                else if(p.role === 'MID') { p.x = 270 + (i * 35); p.y = 260; }
+                else { p.x = 420 + (i * 25); p.y = 260; }
                 p.vx = 0; p.vy = 0;
             });
             team2.forEach((p, i) => {
-                if(p.role === 'GK') { p.x = 770; p.y = 270; }
-                else if(p.role === 'DEF') { p.x = 700 - (i * 35); p.y = 270; }
-                else if(p.role === 'MID') { p.x = 550 - (i * 30); p.y = 270; }
-                else { p.x = 440 - (i * 20); p.y = 270; }
+                if(p.role === 'GK') { p.x = 930; p.y = 260; }
+                else if(p.role === 'DEF') { p.x = 870 - (i * 40); p.y = 260; }
+                else if(p.role === 'MID') { p.x = 690 - (i * 35); p.y = 260; }
+                else { p.x = 540 - (i * 25); p.y = 260; }
                 p.vx = 0; p.vy = 0;
             });
-            ball.x = 410; ball.y = 120; ball.vx = 0; ball.vy = 0; ball.super = false;
+            ball.x = 480; ball.y = 120; ball.vx = 0; ball.vy = 0; ball.super = false;
         }
 
         function update() {
@@ -454,42 +455,42 @@ HTML
 
             team1.forEach((p, i) => {
                 if (i === activeP1) {
-                    if (keys["KeyA"] || keys["a"] || tState.left) p.vx = -4.5;
-                    else if (keys["KeyD"] || keys["d"] || tState.right) p.vx = 4.5;
+                    if (keys["KeyA"] || keys["a"] || tState.left) p.vx = -4;
+                    else if (keys["KeyD"] || keys["d"] || tState.right) p.vx = 4;
                     else p.vx = 0;
-                    if ((keys["KeyW"] || keys["w"] || tState.jump) && p.y >= 270) p.vy = -12;
+                    if ((keys["KeyW"] || keys["w"] || tState.jump) && p.y >= 260) p.vy = -10;
                 } else {
-                    if (ball.x > p.x + 15) p.vx = 2;
-                    else if (ball.x < p.x - 15) p.vx = -2;
+                    if (ball.x > p.x + 12) p.vx = 1.8;
+                    else if (ball.x < p.x - 12) p.vx = -1.8;
                     else p.vx = 0;
-                    if (ball.y < p.y && p.y >= 270 && Math.random() < 0.015) p.vy = -10;
+                    if (ball.y < p.y && p.y >= 260 && Math.random() < 0.015) p.vy = -9;
                 }
             });
 
             team2.forEach((p, i) => {
                 if (gameMode === 2 && i === activeP2) {
-                    if (keys["KeyJ"] || keys["j"]) p.vx = -4.5;
-                    else if (keys["KeyL"] || keys["l"]) p.vx = 4.5;
+                    if (keys["KeyJ"] || keys["j"]) p.vx = -4;
+                    else if (keys["KeyL"] || keys["l"]) p.vx = 4;
                     else p.vx = 0;
-                    if ((keys["KeyI"] || keys["i"]) && p.y >= 270) p.vy = -12;
+                    if ((keys["KeyI"] || keys["i"]) && p.y >= 260) p.vy = -10;
                 } else {
-                    if (ball.x > p.x + 15) p.vx = 2.2;
-                    else if (ball.x < p.x - 15) p.vx = -2.2;
+                    if (ball.x > p.x + 12) p.vx = 2;
+                    else if (ball.x < p.x - 12) p.vx = -2;
                     else p.vx = 0;
-                    if (ball.y < p.y && p.y >= 270 && Math.random() < 0.02) p.vy = -10;
-                    if (p.chakra >= 100 && Math.abs(ball.x - p.x) < 70) triggerSuper(p);
+                    if (ball.y < p.y && p.y >= 260 && Math.random() < 0.02) p.vy = -9;
+                    if (p.chakra >= 100 && Math.abs(ball.x - p.x) < 60) triggerSuper(p);
                 }
             });
 
             [...team1, ...team2].forEach(p => {
-                p.vy += 0.6; p.y += p.vy; p.x += p.vx;
+                p.vy += 0.55; p.y += p.vy; p.x += p.vx;
                 if (p.vx !== 0) p.anim += 0.2; else p.anim = 0;
-                if (p.y > 270) { p.y = 270; p.vy = 0; }
-                if (p.x < 15) p.x = 15; if (p.x > 795) p.x = 795;
+                if (p.y > 260) { p.y = 260; p.vy = 0; }
+                if (p.x < 10) p.x = 10; if (p.x > 940) p.x = 940;
             });
 
             [...team1, ...team2].forEach((p, idx) => {
-                let headX = p.x + p.w/2, headY = p.y + 10;
+                let headX = p.x + p.w/2, headY = p.y + 6;
                 let dist = Math.hypot(ball.x - headX, ball.y - headY);
                 if (dist < ball.r + p.r) {
                     ball.super = false;
@@ -498,9 +499,9 @@ HTML
                     let shotKey = isTeam1 ? (keys["KeyE"] || keys["e"] || tState.shot) : true;
                     
                     if (passKey) {
-                        ball.vx = isTeam1 ? 8 : -8; ball.vy = -5;
+                        ball.vx = isTeam1 ? 7 : -7; ball.vy = -4;
                     } else if (shotKey) {
-                        ball.vx = isTeam1 ? 14 : -14; ball.vy = -8;
+                        ball.vx = isTeam1 ? 12 : -12; ball.vy = -7;
                     } else {
                         ball.vx = (ball.x - headX) * 0.4 + p.vx * 0.5;
                         ball.vy = (ball.y - headY) * 0.4;
@@ -508,20 +509,21 @@ HTML
                 }
             });
 
-            ball.vy += 0.45; ball.x += ball.vx; ball.y += ball.vy;
+            ball.vy += 0.4; ball.x += ball.vx; ball.y += ball.vy;
 
             ballTrail.push({ x: ball.x, y: ball.y, super: ball.super });
             if (ballTrail.length > 8) ballTrail.shift();
 
             if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx *= -0.8; }
-            if (ball.x + ball.r > 820) { ball.x = 820 - ball.r; ball.vx *= -0.8; }
+            if (ball.x + ball.r > 960) { ball.x = 960 - ball.r; ball.vx *= -0.8; }
             if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy *= -0.8; }
-            if (ball.y + ball.r > 370) { ball.y = 370 - ball.r; ball.vy *= -0.7; ball.vx *= 0.95; }
+            if (ball.y + ball.r > 340) { ball.y = 340 - ball.r; ball.vy *= -0.7; ball.vx *= 0.95; }
 
-            if (ball.x - ball.r < 45 && ball.y > 220) {
+            // Aniq darvoza chiziqlari (Chap va O'ng darvozalar)
+            if (ball.x - ball.r < 45 && ball.y > 200) {
                 score2++; createExplosion(ball.x, ball.y, "#ef4444"); resetPositions();
             }
-            if (ball.x + ball.r > 775 && ball.y > 220) {
+            if (ball.x + ball.r > 915 && ball.y > 200) {
                 score1++; createExplosion(ball.x, ball.y, "#22c55e"); resetPositions();
             }
 
@@ -533,55 +535,67 @@ HTML
         }
 
         function drawStadium() {
-            let bgGrad = ctx.createLinearGradient(0, 0, 0, 420);
+            let bgGrad = ctx.createLinearGradient(0, 0, 0, 380);
             bgGrad.addColorStop(0, "#020617");
             bgGrad.addColorStop(0.6, "#0f172a");
             bgGrad.addColorStop(1, "#1e293b");
-            ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, 820, 420);
+            ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, 960, 380);
 
-            ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
-            ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(300, 370); ctx.lineTo(120, 370); ctx.fill();
-            ctx.beginPath(); ctx.moveTo(820, 0); ctx.lineTo(520, 370); ctx.lineTo(700, 370); ctx.fill();
+            ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
+            ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(360, 340); ctx.lineTo(160, 340); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(960, 0); ctx.lineTo(600, 340); ctx.lineTo(800, 340); ctx.fill();
 
-            let grass = ctx.createLinearGradient(0, 370, 0, 420);
+            let grass = ctx.createLinearGradient(0, 340, 0, 380);
             grass.addColorStop(0, "#16a34a"); grass.addColorStop(1, "#15803d");
-            ctx.fillStyle = grass; ctx.fillRect(0, 370, 820, 50);
+            ctx.fillStyle = grass; ctx.fillRect(0, 340, 960, 40);
 
-            ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 4;
-            ctx.strokeRect(0, 220, 45, 150); ctx.strokeRect(775, 220, 45, 150);
-            ctx.beginPath(); ctx.moveTo(410, 0); ctx.lineTo(410, 370); ctx.stroke();
-            ctx.beginPath(); ctx.arc(410, 185, 50, 0, Math.PI * 2); ctx.stroke();
+            // Aniq ko'rinadigan darvozalar
+            ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 4;
+            ctx.strokeRect(0, 200, 45, 140); ctx.strokeRect(915, 200, 45, 140);
+
+            // Darvoza to'ri chiziqlari (setka effekti)
+            ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 1;
+            for(let gx = 10; gx < 45; gx += 10) {
+                ctx.beginPath(); ctx.moveTo(gx, 200); ctx.lineTo(gx, 340); ctx.stroke();
+            }
+            for(let gx = 925; gx < 960; gx += 10) {
+                ctx.beginPath(); ctx.moveTo(gx, 200); ctx.lineTo(gx, 340); ctx.stroke();
+            }
+
+            ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(480, 0); ctx.lineTo(480, 340); ctx.stroke();
+            ctx.beginPath(); ctx.arc(480, 170, 45, 0, Math.PI * 2); ctx.stroke();
         }
 
         function drawHeadPlayer(p, isActive, isTeam1) {
             let cx = p.x + p.w / 2;
             let cy = p.y;
-            let swing = Math.sin(p.anim) * 6;
+            let swing = Math.sin(p.anim) * 5;
 
             ctx.fillStyle = "#1e293b";
-            ctx.fillRect(cx - 6 + swing, cy + 42, 5, 6);
-            ctx.fillRect(cx + 1 - swing, cy + 42, 5, 6);
+            ctx.fillRect(cx - 4 + swing, cy + 30, 3, 5);
+            ctx.fillRect(cx + 1 - swing, cy + 30, 3, 5);
 
             ctx.fillStyle = p.shirtColor;
-            ctx.fillRect(cx - 9, cy + 22, 18, 20);
+            ctx.fillRect(cx - 6, cy + 14, 12, 16);
 
             ctx.fillStyle = "#ffedd5";
-            ctx.beginPath(); ctx.roundRect(cx - 15, cy - 8, 30, 30, 6); ctx.fill();
-            ctx.strokeStyle = isActive ? "#facc15" : "#000"; ctx.lineWidth = isActive ? 2.5 : 1; ctx.stroke();
+            ctx.beginPath(); ctx.roundRect(cx - 10, cy - 6, 20, 20, 4); ctx.fill();
+            ctx.strokeStyle = isActive ? "#facc15" : "#000"; ctx.lineWidth = isActive ? 2 : 1; ctx.stroke();
 
             ctx.fillStyle = p.hairColor;
-            ctx.beginPath(); ctx.roundRect(cx - 17, cy - 12, 34, 12, [6, 6, 2, 2]); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(cx - 11, cy - 9, 22, 8, [4, 4, 1, 1]); ctx.fill();
 
             if (isActive) {
                 ctx.fillStyle = "#facc15";
                 ctx.beginPath();
-                ctx.moveTo(cx, cy - 16); ctx.lineTo(cx - 5, cy - 24); ctx.lineTo(cx + 5, cy - 24);
+                ctx.moveTo(cx, cy - 12); ctx.lineTo(cx - 4, cy - 18); ctx.lineTo(cx + 4, cy - 18);
                 ctx.fill();
             }
 
-            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 14, cy - 30, 28, 4);
+            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 10, cy - 22, 20, 3);
             ctx.fillStyle = p.chakra >= 100 ? "#facc15" : "#3b82f6";
-            ctx.fillRect(cx - 14, cy - 30, (p.chakra / 100) * 28, 4);
+            ctx.fillRect(cx - 10, cy - 22, (p.chakra / 100) * 20, 3);
         }
 
         function draw() {
@@ -597,16 +611,16 @@ HTML
                 ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2); ctx.fill();
             });
 
-            ctx.fillStyle = "#facc15"; ctx.font = "bold 24px Trebuchet MS"; ctx.textAlign = "center";
-            ctx.fillText(`${score1} : ${score2}`, 410, 45);
+            ctx.fillStyle = "#facc15"; ctx.font = "bold 22px Trebuchet MS"; ctx.textAlign = "center";
+            ctx.fillText(`${score1} : ${score2}`, 480, 35);
 
-            ctx.fillStyle = "#38bdf8"; ctx.font = "bold 16px Trebuchet MS";
-            ctx.fillText(`⏱️ 00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`, 410, 20);
+            ctx.fillStyle = "#38bdf8"; ctx.font = "bold 15px Trebuchet MS";
+            ctx.fillText(`⏱️ 00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`, 480, 15);
 
             team1.forEach((p, i) => drawHeadPlayer(p, i === activeP1, true));
             team2.forEach((p, i) => drawHeadPlayer(p, i === activeP2, false));
             
-            ctx.shadowBlur = ball.super ? 20 : 10;
+            ctx.shadowBlur = ball.super ? 15 : 8;
             ctx.shadowColor = ball.super ? "#ef4444" : "#facc15";
             ctx.fillStyle = ball.color; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
             ctx.shadowBlur = 0;
