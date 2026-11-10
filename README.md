@@ -151,7 +151,6 @@ HTML
             <button class="btn btn-green" onclick="startTournamentMatch()">⚔️ O'YINNI BOSHLASH</button>
         </div>
 
-        <!-- Gorizontal keng maydon: 960x380 -->
         <canvas id="gameCanvas" width="960" height="380"></canvas>
 
         <div id="winModal">
@@ -310,27 +309,39 @@ HTML
             }
         }
 
+        // Futbolchilar maydon bo'ylab turli qatorlarga (himoya, yarim himoya, hujum) to'g'ri taqsimlandi
         function createTeam(captainChar, isLeft) {
             let team = [];
-            let startX = isLeft ? 50 : 530;
+            let startX = isLeft ? 100 : 540;
             let dir = isLeft ? 1 : -1;
 
-            team.push({ x: isLeft ? 25 : 930, y: 260, r: 12, w: 12, h: 16, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
+            // 1. Darvozabon (GK) - O'rtada, darvoza oldida
+            let gkX = isLeft ? 35 : 925;
+            team.push({ x: gkX, y: 270, homeX: gkX, homeY: 270, r: 12, w: 12, h: 16, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
 
+            // 2. Himoyachilar (DEF - 4 ta, ikkita qatorga bo'lingan)
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
-                team.push({ x: startX + i * 40 * dir, y: 260, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
+                let hX = startX + (i % 2) * 45 * dir;
+                let hY = i < 2 ? 240 : 300; // Yuqori va pastki himoyachilar
+                team.push({ x: hX, y: hY, homeX: hX, homeY: hY, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
             }
 
+            // 3. Yarim himoyachilar (MID - 4 ta, maydon markaziga)
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
-                team.push({ x: startX + 180 + i * 40 * dir, y: 260, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
+                let hX = startX + 160 + (i % 2) * 50 * dir;
+                let hY = i < 2 ? 230 : 310;
+                team.push({ x: hX, y: hY, homeX: hX, homeY: hY, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
             }
 
-            team.push({ x: startX + 350 * dir, y: 260, r: 12, w: 12, h: 16, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
+            // 4. Hujumchilar (FWD - 2 ta, old qator)
+            let fwdX1 = startX + 300 * dir;
+            team.push({ x: fwdX1, y: 240, homeX: fwdX1, homeY: 240, r: 12, w: 12, h: 16, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
             
             let rndF = availableChars[Math.floor(Math.random() * availableChars.length)];
-            team.push({ x: startX + 390 * dir, y: 260, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
+            let fwdX2 = startX + 300 * dir;
+            team.push({ x: fwdX2, y: 300, homeX: fwdX2, homeY: 300, r: 11, w: 11, h: 15, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
 
             return team;
         }
@@ -433,20 +444,8 @@ HTML
         }
 
         function resetPositions() {
-            team1.forEach((p, i) => {
-                if(p.role === 'GK') { p.x = 25; p.y = 260; }
-                else if(p.role === 'DEF') { p.x = 90 + (i * 40); p.y = 260; }
-                else if(p.role === 'MID') { p.x = 270 + (i * 35); p.y = 260; }
-                else { p.x = 420 + (i * 25); p.y = 260; }
-                p.vx = 0; p.vy = 0;
-            });
-            team2.forEach((p, i) => {
-                if(p.role === 'GK') { p.x = 930; p.y = 260; }
-                else if(p.role === 'DEF') { p.x = 870 - (i * 40); p.y = 260; }
-                else if(p.role === 'MID') { p.x = 690 - (i * 35); p.y = 260; }
-                else { p.x = 540 - (i * 25); p.y = 260; }
-                p.vx = 0; p.vy = 0;
-            });
+            team1.forEach(p => { p.x = p.homeX; p.y = p.homeY; p.vx = 0; p.vy = 0; });
+            team2.forEach(p => { p.x = p.homeX; p.y = p.homeY; p.vx = 0; p.vy = 0; });
             ball.x = 480; ball.y = 120; ball.vx = 0; ball.vy = 0; ball.super = false;
         }
 
@@ -458,12 +457,12 @@ HTML
                     if (keys["KeyA"] || keys["a"] || tState.left) p.vx = -4;
                     else if (keys["KeyD"] || keys["d"] || tState.right) p.vx = 4;
                     else p.vx = 0;
-                    if ((keys["KeyW"] || keys["w"] || tState.jump) && p.y >= 260) p.vy = -10;
+                    if ((keys["KeyW"] || keys["w"] || tState.jump) && p.y >= 150) p.vy = -10;
                 } else {
-                    if (ball.x > p.x + 12) p.vx = 1.8;
-                    else if (ball.x < p.x - 12) p.vx = -1.8;
+                    if (ball.x > p.x + 10) p.vx = 2;
+                    else if (ball.x < p.x - 10) p.vx = -2;
                     else p.vx = 0;
-                    if (ball.y < p.y && p.y >= 260 && Math.random() < 0.015) p.vy = -9;
+                    if (ball.y < p.y && p.y >= 150 && Math.random() < 0.02) p.vy = -9;
                 }
             });
 
@@ -472,12 +471,12 @@ HTML
                     if (keys["KeyJ"] || keys["j"]) p.vx = -4;
                     else if (keys["KeyL"] || keys["l"]) p.vx = 4;
                     else p.vx = 0;
-                    if ((keys["KeyI"] || keys["i"]) && p.y >= 260) p.vy = -10;
+                    if ((keys["KeyI"] || keys["i"]) && p.y >= 150) p.vy = -10;
                 } else {
-                    if (ball.x > p.x + 12) p.vx = 2;
-                    else if (ball.x < p.x - 12) p.vx = -2;
+                    if (ball.x > p.x + 10) p.vx = 2.2;
+                    else if (ball.x < p.x - 10) p.vx = -2.2;
                     else p.vx = 0;
-                    if (ball.y < p.y && p.y >= 260 && Math.random() < 0.02) p.vy = -9;
+                    if (ball.y < p.y && p.y >= 150 && Math.random() < 0.025) p.vy = -9;
                     if (p.chakra >= 100 && Math.abs(ball.x - p.x) < 60) triggerSuper(p);
                 }
             });
@@ -485,7 +484,9 @@ HTML
             [...team1, ...team2].forEach(p => {
                 p.vy += 0.55; p.y += p.vy; p.x += p.vx;
                 if (p.vx !== 0) p.anim += 0.2; else p.anim = 0;
-                if (p.y > 260) { p.y = 260; p.vy = 0; }
+                // Yer chegarasi (har xil balandlikda turishi uchun pastga tushib ketmaydi)
+                if (p.y > 310) { p.y = 310; p.vy = 0; }
+                if (p.y < 120) { p.y = 120; p.vy = 0; }
                 if (p.x < 10) p.x = 10; if (p.x > 940) p.x = 940;
             });
 
@@ -519,7 +520,6 @@ HTML
             if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy *= -0.8; }
             if (ball.y + ball.r > 340) { ball.y = 340 - ball.r; ball.vy *= -0.7; ball.vx *= 0.95; }
 
-            // Aniq darvoza chiziqlari (Chap va O'ng darvozalar)
             if (ball.x - ball.r < 45 && ball.y > 200) {
                 score2++; createExplosion(ball.x, ball.y, "#ef4444"); resetPositions();
             }
@@ -549,11 +549,9 @@ HTML
             grass.addColorStop(0, "#16a34a"); grass.addColorStop(1, "#15803d");
             ctx.fillStyle = grass; ctx.fillRect(0, 340, 960, 40);
 
-            // Aniq ko'rinadigan darvozalar
             ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 4;
             ctx.strokeRect(0, 200, 45, 140); ctx.strokeRect(915, 200, 45, 140);
 
-            // Darvoza to'ri chiziqlari (setka effekti)
             ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 1;
             for(let gx = 10; gx < 45; gx += 10) {
                 ctx.beginPath(); ctx.moveTo(gx, 200); ctx.lineTo(gx, 340); ctx.stroke();
