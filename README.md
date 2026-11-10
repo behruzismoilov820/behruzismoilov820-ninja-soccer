@@ -225,11 +225,10 @@ HTML
         let activeP1 = 0; 
         let activeP2 = 0; 
 
-        // Ikki marta bosishni aniqlash uchun vaqt va taymer o'zgaruvchilari
         let lastSPressTime = 0;
         let lastKPressTime = 0;
 
-        let ball = { x: 520, y: 240, z: 0, r: 8, vx: 0, vy: 0, vz: 0, color: "#facc15", super: false };
+        let ball = { x: 520, y: 240, z: 0, r: 9, vx: 0, vy: 0, vz: 0, color: "#facc15", super: false };
         let keys = {};
         let tState = { left: false, right: false, up: false, down: false, pass: false, shot: false };
         let gameRunning = false;
@@ -237,7 +236,6 @@ HTML
         window.addEventListener("keydown", e => {
             keys[e.code] = true; keys[e.key.toLowerCase()] = true;
             
-            // P1: S tugmasini ikki marta bosganda o'yinchini almashtirish
             if (e.code === "KeyS" || e.key.toLowerCase() === "s") {
                 let now = Date.now();
                 if (now - lastSPressTime < 300) {
@@ -248,7 +246,6 @@ HTML
                 }
             }
 
-            // P2: K tugmasini ikki marta bosganda o'yinchini almashtirish
             if ((e.code === "KeyK" || e.key.toLowerCase() === "k") && gameMode === 2) {
                 let now = Date.now();
                 if (now - lastKPressTime < 300) {
@@ -259,11 +256,9 @@ HTML
                 }
             }
 
-            // Q: Jutsu yoki Oddiy Zarba
             if (e.code === "KeyQ") {
                 triggerSuperOrShot(team1[activeP1], true);
             }
-            // U: Jutsu yoki Oddiy Zarba
             if (e.code === "KeyU" && gameMode === 2) {
                 triggerSuperOrShot(team2[activeP2], false);
             }
@@ -291,7 +286,7 @@ HTML
             } else {
                 let dir = isTeam1 ? 1 : -1;
                 let dist = Math.hypot(ball.x - p.x, ball.y - p.y);
-                if (dist < 40) {
+                if (dist < 45) {
                     ball.vx = dir * 14;
                     ball.vz = -5;
                     ball.vy = (Math.random() - 0.5) * 4;
@@ -360,28 +355,28 @@ HTML
             let dir = isLeft ? 1 : -1;
 
             let gkX = isLeft ? 80 : 960;
-            team.push({ x: gkX, y: 240, z: 0, homeX: gkX, homeY: 240, r: 10, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
+            team.push({ x: gkX, y: 240, z: 0, homeX: gkX, homeY: 240, r: 14, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
 
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
                 let hX = startX + (i % 2) * 55 * dir;
                 let hY = i < 2 ? 160 : 320;
-                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 9, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
+                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 13, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
             }
 
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
                 let hX = startX + 200 + (i % 2) * 65 * dir;
                 let hY = i < 2 ? 140 : 340;
-                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 9, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
+                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 13, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
             }
 
             let fwdX1 = startX + 360 * dir;
-            team.push({ x: fwdX1, y: 190, z: 0, homeX: fwdX1, homeY: 190, r: 10, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
+            team.push({ x: fwdX1, y: 190, z: 0, homeX: fwdX1, homeY: 190, r: 14, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
             
             let rndF = availableChars[Math.floor(Math.random() * availableChars.length)];
             let fwdX2 = startX + 360 * dir;
-            team.push({ x: fwdX2, y: 290, z: 0, homeX: fwdX2, homeY: 290, r: 9, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
+            team.push({ x: fwdX2, y: 290, z: 0, homeX: fwdX2, homeY: 290, r: 13, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
 
             return team;
         }
@@ -465,7 +460,7 @@ HTML
                 } else {
                     winTitle.innerText = "🏆 WINNER!";
                     winTitle.style.color = "#facc15";
-                    winText.innerText = `2-Jamoa G'olib Bo'ldi!\nHisob: ${score2} : ${score1}`;
+                    winText.innerText = `2-Jamoa G'olib Bo'ldi!\nHisob: ${score1} : ${score2}`;
                     nextBtn.innerText = "🔄 QAYTA O'YNASH";
                 }
             } else {
@@ -539,7 +534,7 @@ HTML
 
             [...team1, ...team2].forEach((p, idx) => {
                 let dist = Math.hypot(ball.x - p.x, ball.y - p.y);
-                if (dist < ball.r + p.r + 4 && Math.abs(ball.z - p.z) < 15) {
+                if (dist < ball.r + p.r + 4 && Math.abs(ball.z - p.z) < 18) {
                     ball.super = false;
                     let isTeam1 = idx < 11;
                     let passKey = isTeam1 ? (keys["KeyS"] || keys["s"] || tState.pass) : (keys["KeyK"] || keys["k"]);
@@ -617,38 +612,60 @@ HTML
             ctx.fillRect(980, 160, 40, 180);
         }
 
+        // Futbolchilarni yorqinroq va kattaroq qilib chizuvchi funksiya
         function drawHeadPlayer(p, isActive, isTeam1) {
             let cx = p.x;
             let cy = p.y + p.z;
-            let swing = Math.sin(p.anim) * 3;
+            let swing = Math.sin(p.anim) * 4;
 
-            ctx.fillStyle = "rgba(0,0,0,0.4)";
-            ctx.beginPath(); ctx.ellipse(p.x, p.y + 10, 9, 4, 0, 0, Math.PI * 2); ctx.fill();
+            // Soya (Aniqroq)
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.beginPath(); ctx.ellipse(p.x, p.y + 14, 13, 6, 0, 0, Math.PI * 2); ctx.fill();
 
-            ctx.fillStyle = "#1e293b";
-            ctx.fillRect(cx - 3 + swing, cy + 4, 2, 4);
-            ctx.fillRect(cx + 1 - swing, cy + 4, 2, 4);
+            // Oyoqlar
+            ctx.fillStyle = "#0f172a";
+            ctx.fillRect(cx - 5 + swing, cy + 8, 4, 7);
+            ctx.fillRect(cx + 1 - swing, cy + 8, 4, 7);
 
+            // Tana (Futbolka)
             ctx.fillStyle = p.shirtColor;
-            ctx.fillRect(cx - 4, cy - 4, 9, 10);
+            ctx.beginPath();
+            ctx.roundRect(cx - 8, cy - 5, 16, 15, 3);
+            ctx.fill();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1;
+            ctx.stroke();
 
+            // Bosh (Yuz rangi va kattaroq o'lcham)
             ctx.fillStyle = "#ffedd5";
-            ctx.beginPath(); ctx.arc(cx, cy - 10, 8, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = isActive ? "#facc15" : "#000"; ctx.lineWidth = isActive ? 1.5 : 0.8; ctx.stroke();
+            ctx.beginPath(); ctx.arc(cx, cy - 14, 11, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = isActive ? "#facc15" : "#000000"; 
+            ctx.lineWidth = isActive ? 2.5 : 1.2; 
+            ctx.stroke();
 
+            // Soch
             ctx.fillStyle = p.hairColor;
-            ctx.beginPath(); ctx.arc(cx, cy - 13, 7, Math.PI, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx, cy - 18, 10, Math.PI, Math.PI * 2); ctx.fill();
 
+            // Aktiv o'yinchi ko'rsatkichi (Sariq Uchburchak)
             if (isActive) {
                 ctx.fillStyle = "#facc15";
                 ctx.beginPath();
-                ctx.moveTo(cx, cy - 20); ctx.lineTo(cx - 3, cy - 26); ctx.lineTo(cx + 3, cy - 26);
+                ctx.moveTo(cx, cy - 30); 
+                ctx.lineTo(cx - 6, cy - 38); 
+                ctx.lineTo(cx + 6, cy - 38);
+                ctx.closePath();
                 ctx.fill();
+                ctx.strokeStyle = "#000";
+                ctx.lineWidth = 1;
+                ctx.stroke();
             }
 
-            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 10, cy - 28, 20, 2.5);
+            // Chakra Indikatori
+            ctx.fillStyle = "rgba(0,0,0,0.7)"; 
+            ctx.fillRect(cx - 13, cy - 43, 26, 4);
             ctx.fillStyle = p.chakra >= 100 ? "#facc15" : "#3b82f6";
-            ctx.fillRect(cx - 10, cy - 28, (p.chakra / 100) * 20, 2.5);
+            ctx.fillRect(cx - 13, cy - 43, (p.chakra / 100) * 26, 4);
         }
 
         function draw() {
@@ -669,7 +686,7 @@ HTML
                     drawHeadPlayer(realP, isActive, ent.isTeam1);
                 } else if (ent.isBall) {
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
-                    ctx.beginPath(); ctx.ellipse(ball.x, ball.y + 6, ball.r, ball.r/2, 0, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.ellipse(ball.x, ball.y + 7, ball.r, ball.r/2, 0, 0, Math.PI * 2); ctx.fill();
 
                     ballTrail.forEach((t, index) => {
                         ctx.fillStyle = t.super ? `rgba(250, 204, 21, ${index / 10})` : `rgba(255, 255, 255, ${index / 12})`;
