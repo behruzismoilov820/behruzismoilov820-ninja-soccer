@@ -1,10 +1,12 @@
+HTML
+
 
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🥷 NINJA SOCCER 3D ⚽</title>
+    <title>🥷 NINJA SOCCER 3D PRO ⚽</title>
     <style>
         * { box-sizing: border-box; touch-action: manipulation; }
         body {
@@ -22,15 +24,15 @@
             border: 2px solid rgba(251, 191, 36, 0.4);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(234, 179, 8, 0.2);
             display: flex; flex-direction: column; align-items: center;
-            width: 100%; max-width: 980px; position: relative;
+            width: 100%; max-width: 1060px; position: relative;
         }
 
         #splashScreen {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; height: 380px; text-align: center;
+            width: 100%; height: 420px; text-align: center;
         }
         #splashScreen img {
-            max-width: 100%; max-height: 320px; border-radius: 18px;
+            max-width: 100%; max-height: 360px; border-radius: 18px;
             border: 2px solid rgba(251, 191, 36, 0.6);
             box-shadow: 0 0 25px rgba(0,0,0,0.9);
         }
@@ -134,9 +136,9 @@
             <button class="btn btn-green" onclick="selectMode(2)">2 KISHILIK (2 PLAYER)</button>
             <button class="btn btn-gold" onclick="selectMode(3)">🏆 TURNIR (NINJA CUP)</button>
             <div style="margin-top: 10px; font-size: 12px; color: #94a3b8; line-height: 1.4;">
-                <p><b>O'yinchini almashtirish:</b> Tab (PC) yoki "Almashtir" (Mobil)</p>
-                <p><b>Super Zarba (Jutsu):</b> P1 (Q)</p>
-                <p><b>Boshqaruv:</b> P1 (W, A, S, D | E: Zarba) | P2 (I, J, K, L | O: Zarba)</p>
+                <p><b>P1 Boshqaruv:</b> A, D (Yurish) | W (Sakrash) | S (Pass / 2 marta: Almashtirish) | Q (Shot / Jutsu)</p>
+                <p><b>P2 Boshqaruv:</b> J, L (Yurish) | I (Sakrash) | K (Pass / 2 marta: Almashtirish) | U (Shot / Jutsu)</p>
+                <p><b>O'yinchini almashtirish:</b> Tab (PC), "Almashtir" (Mobil) yoki S/K ni 2 marta bosish</p>
             </div>
         </div>
 
@@ -151,7 +153,7 @@
             <button class="btn btn-green" onclick="startTournamentMatch()">⚔️ O'YINNI BOSHLASH</button>
         </div>
 
-        <canvas id="gameCanvas" width="960" height="420"></canvas>
+        <canvas id="gameCanvas" width="1040" height="460"></canvas>
 
         <div id="winModal">
             <h2 id="winTitle">🏆 G'OLIB!</h2>
@@ -169,7 +171,7 @@
             </div>
             <div class="touch-group">
                 <button class="t-btn" style="background:#8b5cf6;" onclick="switchActivePlayer(1)">🔄 Almashtir</button>
-                <button class="t-btn super-btn" ontouchstart="triggerSuper(team1[activeP1])">⚡ JUTSU</button>
+                <button class="t-btn super-btn" ontouchstart="triggerSuperOrShot(team1[activeP1], true)">⚡ JUTSU/SHOT</button>
                 <button class="t-btn" style="background:#059669;" ontouchstart="tState.pass=true" ontouchend="tState.pass=false">Pass</button>
                 <button class="t-btn" style="background:#dc2626;" ontouchstart="tState.shot=true" ontouchend="tState.shot=false">Shot</button>
             </div>
@@ -223,17 +225,51 @@
         let activeP1 = 0; 
         let activeP2 = 0; 
 
-        let ball = { x: 480, y: 220, z: 0, r: 10, vx: 0, vy: 0, vz: 0, color: "#facc15", super: false };
+        // Ikki marta bosishni aniqlash uchun vaqt va taymer o'zgaruvchilari
+        let lastSPressTime = 0;
+        let lastKPressTime = 0;
+
+        let ball = { x: 520, y: 240, z: 0, r: 8, vx: 0, vy: 0, vz: 0, color: "#facc15", super: false };
         let keys = {};
         let tState = { left: false, right: false, up: false, down: false, pass: false, shot: false };
         let gameRunning = false;
 
         window.addEventListener("keydown", e => {
             keys[e.code] = true; keys[e.key.toLowerCase()] = true;
-            if (e.code === "KeyQ") triggerSuper(team1[activeP1]);
-            if (e.code === "KeyU" && gameMode === 2) triggerSuper(team2[activeP2]);
+            
+            // P1: S tugmasini ikki marta bosganda o'yinchini almashtirish
+            if (e.code === "KeyS" || e.key.toLowerCase() === "s") {
+                let now = Date.now();
+                if (now - lastSPressTime < 300) {
+                    switchActivePlayer(1);
+                    lastSPressTime = 0;
+                } else {
+                    lastSPressTime = now;
+                }
+            }
+
+            // P2: K tugmasini ikki marta bosganda o'yinchini almashtirish
+            if ((e.code === "KeyK" || e.key.toLowerCase() === "k") && gameMode === 2) {
+                let now = Date.now();
+                if (now - lastKPressTime < 300) {
+                    switchActivePlayer(2);
+                    lastKPressTime = 0;
+                } else {
+                    lastKPressTime = now;
+                }
+            }
+
+            // Q: Jutsu yoki Oddiy Zarba
+            if (e.code === "KeyQ") {
+                triggerSuperOrShot(team1[activeP1], true);
+            }
+            // U: Jutsu yoki Oddiy Zarba
+            if (e.code === "KeyU" && gameMode === 2) {
+                triggerSuperOrShot(team2[activeP2], false);
+            }
             if (e.code === "Tab") { e.preventDefault(); switchActivePlayer(1); }
         });
+
         window.addEventListener("keyup", e => { keys[e.code] = false; keys[e.key.toLowerCase()] = false; });
 
         function switchActivePlayer(teamNum) {
@@ -244,14 +280,22 @@
             }
         }
 
-        function triggerSuper(p) {
+        function triggerSuperOrShot(p, isTeam1) {
             if (p.chakra >= 100) {
                 p.chakra = 0;
                 ball.super = true;
-                let dir = (team1.includes(p)) ? 1 : -1;
+                let dir = isTeam1 ? 1 : -1;
                 ball.vx = dir * 22;
                 ball.vz = -4;
                 createExplosion(ball.x, ball.y, p.shirtColor);
+            } else {
+                let dir = isTeam1 ? 1 : -1;
+                let dist = Math.hypot(ball.x - p.x, ball.y - p.y);
+                if (dist < 40) {
+                    ball.vx = dir * 14;
+                    ball.vz = -5;
+                    ball.vy = (Math.random() - 0.5) * 4;
+                }
             }
         }
 
@@ -312,32 +356,32 @@
 
         function createTeam(captainChar, isLeft) {
             let team = [];
-            let startX = isLeft ? 150 : 550;
+            let startX = isLeft ? 180 : 600;
             let dir = isLeft ? 1 : -1;
 
-            let gkX = isLeft ? 60 : 900;
-            team.push({ x: gkX, y: 220, z: 0, homeX: gkX, homeY: 220, r: 14, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
+            let gkX = isLeft ? 80 : 960;
+            team.push({ x: gkX, y: 240, z: 0, homeX: gkX, homeY: 240, r: 10, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "GK: " + captainChar.name, chakra: 100, anim: 0, role: 'GK' });
 
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
-                let hX = startX + (i % 2) * 50 * dir;
-                let hY = i < 2 ? 150 : 290;
-                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 12, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
+                let hX = startX + (i % 2) * 55 * dir;
+                let hY = i < 2 ? 160 : 320;
+                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 9, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'DEF' });
             }
 
             for (let i = 0; i < 4; i++) {
                 let rnd = availableChars[Math.floor(Math.random() * availableChars.length)];
-                let hX = startX + 180 + (i % 2) * 60 * dir;
-                let hY = i < 2 ? 130 : 310;
-                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 12, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
+                let hX = startX + 200 + (i % 2) * 65 * dir;
+                let hY = i < 2 ? 140 : 340;
+                team.push({ x: hX, y: hY, z: 0, homeX: hX, homeY: hY, r: 9, vx: 0, vy: 0, shirtColor: rnd.shirtColor, hairColor: rnd.hairColor, name: rnd.name, chakra: 100, anim: 0, role: 'MID' });
             }
 
-            let fwdX1 = startX + 320 * dir;
-            team.push({ x: fwdX1, y: 170, z: 0, homeX: fwdX1, homeY: 170, r: 14, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
+            let fwdX1 = startX + 360 * dir;
+            team.push({ x: fwdX1, y: 190, z: 0, homeX: fwdX1, homeY: 190, r: 10, vx: 0, vy: 0, shirtColor: captainChar.shirtColor, hairColor: captainChar.hairColor, name: "FWD: " + captainChar.name, chakra: 100, anim: 0, role: 'FWD' });
             
             let rndF = availableChars[Math.floor(Math.random() * availableChars.length)];
-            let fwdX2 = startX + 320 * dir;
-            team.push({ x: fwdX2, y: 270, z: 0, homeX: fwdX2, homeY: 270, r: 12, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
+            let fwdX2 = startX + 360 * dir;
+            team.push({ x: fwdX2, y: 290, z: 0, homeX: fwdX2, homeY: 290, r: 9, vx: 0, vy: 0, shirtColor: rndF.shirtColor, hairColor: rndF.hairColor, name: rndF.name, chakra: 100, anim: 0, role: 'FWD' });
 
             return team;
         }
@@ -411,7 +455,7 @@
                 }
                 winTitle.style.color = "#facc15";
                 winText.style.color = team1[0].shirtColor;
-                createExplosion(480, 220, "#facc15");
+                createExplosion(520, 240, "#facc15");
             } else if (score2 > score1) {
                 if (gameMode === 1 || gameMode === 3) {
                     winTitle.innerText = "❌ YUTQAZDINGIZ!";
@@ -442,7 +486,7 @@
         function resetPositions() {
             team1.forEach(p => { p.x = p.homeX; p.y = p.homeY; p.z = 0; p.vx = 0; p.vy = 0; });
             team2.forEach(p => { p.x = p.homeX; p.y = p.homeY; p.z = 0; p.vx = 0; p.vy = 0; });
-            ball.x = 480; ball.y = 220; ball.z = 0; ball.vx = 0; ball.vy = 0; ball.vz = 0; ball.super = false;
+            ball.x = 520; ball.y = 240; ball.z = 0; ball.vx = 0; ball.vy = 0; ball.vz = 0; ball.super = false;
         }
 
         function update() {
@@ -450,12 +494,11 @@
 
             team1.forEach((p, i) => {
                 if (i === activeP1) {
-                    let moveX = 0, moveY = 0;
+                    let moveX = 0;
                     if (keys["KeyA"] || keys["a"] || tState.left) moveX = -3.5;
                     if (keys["KeyD"] || keys["d"] || tState.right) moveX = 3.5;
-                    if (keys["KeyW"] || keys["w"] || tState.up) moveY = -3;
-                    if (keys["KeyS"] || keys["s"] || tState.down) moveY = 3;
-                    p.vx = moveX; p.vy = moveY;
+                    if ((keys["KeyW"] || keys["w"] || tState.up) && p.z === 0) p.vz = -7;
+                    p.vx = moveX;
                 } else {
                     if (ball.x > p.x + 8) p.vx = 1.8;
                     else if (ball.x < p.x - 8) p.vx = -1.8;
@@ -468,12 +511,11 @@
 
             team2.forEach((p, i) => {
                 if (gameMode === 2 && i === activeP2) {
-                    let moveX = 0, moveY = 0;
+                    let moveX = 0;
                     if (keys["KeyJ"] || keys["j"]) moveX = -3.5;
                     if (keys["KeyL"] || keys["l"]) moveX = 3.5;
-                    if (keys["KeyI"] || keys["i"]) moveY = -3;
-                    if (keys["KeyK"] || keys["k"]) moveY = 3;
-                    p.vx = moveX; p.vy = moveY;
+                    if ((keys["KeyI"] || keys["i"]) && p.z === 0) p.vz = -7;
+                    p.vx = moveX;
                 } else {
                     if (ball.x > p.x + 8) p.vx = 2;
                     else if (ball.x < p.x - 8) p.vx = -2;
@@ -481,30 +523,29 @@
                     if (ball.y > p.y + 8) p.vy = 1.5;
                     else if (ball.y < p.y - 8) p.vy = -1.5;
                     else p.vy = 0;
-                    if (p.chakra >= 100 && Math.hypot(ball.x - p.x, ball.y - p.y) < 70) triggerSuper(p);
+                    if (p.chakra >= 100 && Math.hypot(ball.x - p.x, ball.y - p.y) < 70) triggerSuperOrShot(p, false);
                 }
             });
 
             [...team1, ...team2].forEach(p => {
+                p.z += p.vz; p.vz += 0.4;
+                if (p.z > 0) { p.z = 0; p.vz = 0; }
                 p.x += p.vx; p.y += p.vy;
                 if (p.vx !== 0 || p.vy !== 0) p.anim += 0.2; else p.anim = 0;
 
-                if (p.x < 60) p.x = 60; if (p.x > 900) p.x = 900;
-                if (p.y < 120) p.y = 120; if (p.y > 340) p.y = 340;
+                if (p.x < 50) p.x = 50; if (p.x > 990) p.x = 990;
+                if (p.y < 100) p.y = 100; if (p.y > 380) p.y = 380;
             });
 
             [...team1, ...team2].forEach((p, idx) => {
                 let dist = Math.hypot(ball.x - p.x, ball.y - p.y);
-                if (dist < ball.r + p.r) {
+                if (dist < ball.r + p.r + 4 && Math.abs(ball.z - p.z) < 15) {
                     ball.super = false;
                     let isTeam1 = idx < 11;
-                    let passKey = isTeam1 ? (keys["KeyS"] || keys["s"] || tState.pass) : false;
-                    let shotKey = isTeam1 ? (keys["KeyE"] || keys["e"] || tState.shot) : true;
+                    let passKey = isTeam1 ? (keys["KeyS"] || keys["s"] || tState.pass) : (keys["KeyK"] || keys["k"]);
                     
                     if (passKey) {
                         ball.vx = isTeam1 ? 8 : -8; ball.vy = (Math.random() - 0.5) * 4; ball.vz = -3;
-                    } else if (shotKey) {
-                        ball.vx = isTeam1 ? 14 : -14; ball.vy = (Math.random() - 0.5) * 4; ball.vz = -5;
                     } else {
                         ball.vx = (ball.x - p.x) * 0.4;
                         ball.vy = (ball.y - p.y) * 0.4;
@@ -518,16 +559,16 @@
             ballTrail.push({ x: ball.x, y: ball.y, z: ball.z, super: ball.super });
             if (ballTrail.length > 8) ballTrail.shift();
 
-            if (ball.x - ball.r < 40) { ball.x = 40; ball.vx *= -0.8; }
-            if (ball.x + ball.r > 920) { ball.x = 920 - ball.r; ball.vx *= -0.8; }
-            if (ball.y - ball.r < 100) { ball.y = 100 + ball.r; ball.vy *= -0.8; }
-            if (ball.y + ball.r > 360) { ball.y = 360 - ball.r; ball.vy *= -0.8; }
+            if (ball.x - ball.r < 30) { ball.x = 30; ball.vx *= -0.8; }
+            if (ball.x + ball.r > 1010) { ball.x = 1010 - ball.r; ball.vx *= -0.8; }
+            if (ball.y - ball.r < 80) { ball.y = 80 + ball.r; ball.vy *= -0.8; }
+            if (ball.y + ball.r > 400) { ball.y = 400 - ball.r; ball.vy *= -0.8; }
             if (ball.z > 0) { ball.z = 0; ball.vz *= -0.6; ball.vx *= 0.95; ball.vy *= 0.95; }
 
-            if (ball.x < 80 && ball.y > 170 && ball.y < 270 && ball.z > -30) {
+            if (ball.x < 60 && ball.y > 160 && ball.y < 320 && ball.z > -30) {
                 score2++; createExplosion(ball.x, ball.y, "#ef4444"); resetPositions();
             }
-            if (ball.x > 880 && ball.y > 170 && ball.y < 270 && ball.z > -30) {
+            if (ball.x > 980 && ball.y > 160 && ball.y < 320 && ball.z > -30) {
                 score1++; createExplosion(ball.x, ball.y, "#22c55e"); resetPositions();
             }
 
@@ -539,75 +580,75 @@
         }
 
         function drawStadium() {
-            let bgGrad = ctx.createLinearGradient(0, 0, 0, 420);
+            let bgGrad = ctx.createLinearGradient(0, 0, 0, 460);
             bgGrad.addColorStop(0, "#020617");
             bgGrad.addColorStop(0.5, "#0f172a");
             bgGrad.addColorStop(1, "#1e293b");
-            ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, 960, 420);
+            ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, 1040, 460);
 
-            let pitchGrad = ctx.createLinearGradient(0, 100, 0, 380);
+            let pitchGrad = ctx.createLinearGradient(0, 80, 0, 420);
             pitchGrad.addColorStop(0, "#15803d");
             pitchGrad.addColorStop(1, "#16a34a");
             ctx.fillStyle = pitchGrad;
             ctx.beginPath();
-            ctx.moveTo(120, 100); ctx.lineTo(840, 100);
-            ctx.lineTo(940, 380); ctx.lineTo(20, 380);
+            ctx.moveTo(100, 80); ctx.lineTo(940, 80);
+            ctx.lineTo(1020, 420); ctx.lineTo(20, 420);
             ctx.closePath();
             ctx.fill();
 
             ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.moveTo(120, 100); ctx.lineTo(840, 100);
-            ctx.lineTo(940, 380); ctx.lineTo(20, 380);
+            ctx.moveTo(100, 80); ctx.lineTo(940, 80);
+            ctx.lineTo(1020, 420); ctx.lineTo(20, 420);
             ctx.closePath();
             ctx.stroke();
 
-            ctx.beginPath(); ctx.moveTo(480, 100); ctx.lineTo(480, 380); ctx.stroke();
-            ctx.beginPath(); ctx.ellipse(480, 240, 50, 25, 0, 0, Math.PI * 2); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(520, 80); ctx.lineTo(520, 420); ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(520, 250, 60, 30, 0, 0, Math.PI * 2); ctx.stroke();
 
-            ctx.fillStyle = "rgba(255,255,255,0.15)";
-            ctx.fillRect(20, 170, 30, 100);
-            ctx.strokeStyle = "#fff"; ctx.lineWidth = 4;
-            ctx.strokeRect(20, 170, 30, 100);
+            ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 4;
+            ctx.strokeRect(20, 160, 40, 180);
+            ctx.fillStyle = "rgba(255,255,255,0.1)";
+            ctx.fillRect(20, 160, 40, 180);
 
-            ctx.fillStyle = "rgba(255,255,255,0.15)";
-            ctx.fillRect(910, 170, 30, 100);
-            ctx.strokeStyle = "#fff"; ctx.lineWidth = 4;
-            ctx.strokeRect(910, 170, 30, 100);
+            ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 4;
+            ctx.strokeRect(980, 160, 40, 180);
+            ctx.fillStyle = "rgba(255,255,255,0.1)";
+            ctx.fillRect(980, 160, 40, 180);
         }
 
         function drawHeadPlayer(p, isActive, isTeam1) {
             let cx = p.x;
             let cy = p.y + p.z;
-            let swing = Math.sin(p.anim) * 4;
+            let swing = Math.sin(p.anim) * 3;
 
             ctx.fillStyle = "rgba(0,0,0,0.4)";
-            ctx.beginPath(); ctx.ellipse(p.x, p.y + 12, 12, 6, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(p.x, p.y + 10, 9, 4, 0, 0, Math.PI * 2); ctx.fill();
 
             ctx.fillStyle = "#1e293b";
-            ctx.fillRect(cx - 4 + swing, cy + 6, 3, 6);
-            ctx.fillRect(cx + 1 - swing, cy + 6, 3, 6);
+            ctx.fillRect(cx - 3 + swing, cy + 4, 2, 4);
+            ctx.fillRect(cx + 1 - swing, cy + 4, 2, 4);
 
             ctx.fillStyle = p.shirtColor;
-            ctx.fillRect(cx - 6, cy - 6, 12, 14);
+            ctx.fillRect(cx - 4, cy - 4, 9, 10);
 
             ctx.fillStyle = "#ffedd5";
-            ctx.beginPath(); ctx.arc(cx, cy - 14, 11, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = isActive ? "#facc15" : "#000"; ctx.lineWidth = isActive ? 2 : 1; ctx.stroke();
+            ctx.beginPath(); ctx.arc(cx, cy - 10, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = isActive ? "#facc15" : "#000"; ctx.lineWidth = isActive ? 1.5 : 0.8; ctx.stroke();
 
             ctx.fillStyle = p.hairColor;
-            ctx.beginPath(); ctx.arc(cx, cy - 18, 9, Math.PI, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx, cy - 13, 7, Math.PI, Math.PI * 2); ctx.fill();
 
             if (isActive) {
                 ctx.fillStyle = "#facc15";
                 ctx.beginPath();
-                ctx.moveTo(cx, cy - 28); ctx.lineTo(cx - 4, cy - 35); ctx.lineTo(cx + 4, cy - 35);
+                ctx.moveTo(cx, cy - 20); ctx.lineTo(cx - 3, cy - 26); ctx.lineTo(cx + 3, cy - 26);
                 ctx.fill();
             }
 
-            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 12, cy - 36, 24, 3);
+            ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(cx - 10, cy - 28, 20, 2.5);
             ctx.fillStyle = p.chakra >= 100 ? "#facc15" : "#3b82f6";
-            ctx.fillRect(cx - 12, cy - 36, (p.chakra / 100) * 24, 3);
+            ctx.fillRect(cx - 10, cy - 28, (p.chakra / 100) * 20, 2.5);
         }
 
         function draw() {
@@ -628,7 +669,7 @@
                     drawHeadPlayer(realP, isActive, ent.isTeam1);
                 } else if (ent.isBall) {
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
-                    ctx.beginPath(); ctx.ellipse(ball.x, ball.y + 8, ball.r, ball.r/2, 0, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.ellipse(ball.x, ball.y + 6, ball.r, ball.r/2, 0, 0, Math.PI * 2); ctx.fill();
 
                     ballTrail.forEach((t, index) => {
                         ctx.fillStyle = t.super ? `rgba(250, 204, 21, ${index / 10})` : `rgba(255, 255, 255, ${index / 12})`;
@@ -649,10 +690,10 @@
             });
 
             ctx.fillStyle = "#facc15"; ctx.font = "bold 22px Trebuchet MS"; ctx.textAlign = "center";
-            ctx.fillText(`${score1} : ${score2}`, 480, 35);
+            ctx.fillText(`${score1} : ${score2}`, 520, 35);
 
             ctx.fillStyle = "#38bdf8"; ctx.font = "bold 15px Trebuchet MS";
-            ctx.fillText(`⏱️ 00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`, 480, 15);
+            ctx.fillText(`⏱️ 00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`, 520, 15);
         }
 
         function loop() {
