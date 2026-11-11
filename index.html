@@ -136,9 +136,9 @@ HTML
             <button class="btn btn-green" onclick="selectMode(2)">2 KISHILIK (2 PLAYER)</button>
             <button class="btn btn-gold" onclick="selectMode(3)">🏆 TURNIR (NINJA CUP)</button>
             <div style="margin-top: 10px; font-size: 12px; color: #94a3b8; line-height: 1.4;">
-                <p><b>P1 Boshqaruv:</b> A, D (Yurish) | W (Sakrash) | S (Pass / 2 marta: Almashtirish) | Q (Shot / Jutsu)</p>
-                <p><b>P2 Boshqaruv:</b> J, L (Yurish) | I (Sakrash) | K (Pass / 2 marta: Almashtirish) | U (Shot / Jutsu)</p>
-                <p><b>O'yinchini almashtirish:</b> Tab (PC), "Almashtir" (Mobil) yoki S/K ni 2 marta bosish</p>
+                <p><b>P1 Boshqaruv:</b> A, D (Yurish) | W (Sakrash) | S (Pass) | Q (Shot / Jutsu)</p>
+                <p><b>P2 Boshqaruv:</b> J, L (Yurish) | I (Sakrash) | K (Pass) | U (Shot / Jutsu)</p>
+                <p><b>O'yinchini almashtirish:</b> Tab (PC) yoki "Almashtir" (Mobil)</p>
             </div>
         </div>
 
@@ -225,10 +225,6 @@ HTML
         let activeP1 = 0; 
         let activeP2 = 0; 
 
-        // Ikki marta bosishni aniqlash uchun vaqt va taymer o'zgaruvchilari
-        let lastSPressTime = 0;
-        let lastKPressTime = 0;
-
         let ball = { x: 520, y: 240, z: 0, r: 8, vx: 0, vy: 0, vz: 0, color: "#facc15", super: false };
         let keys = {};
         let tState = { left: false, right: false, up: false, down: false, pass: false, shot: false };
@@ -237,39 +233,16 @@ HTML
         window.addEventListener("keydown", e => {
             keys[e.code] = true; keys[e.key.toLowerCase()] = true;
             
-            // P1: S tugmasini ikki marta bosganda o'yinchini almashtirish
-            if (e.code === "KeyS" || e.key.toLowerCase() === "s") {
-                let now = Date.now();
-                if (now - lastSPressTime < 300) {
-                    switchActivePlayer(1);
-                    lastSPressTime = 0;
-                } else {
-                    lastSPressTime = now;
-                }
-            }
-
-            // P2: K tugmasini ikki marta bosganda o'yinchini almashtirish
-            if ((e.code === "KeyK" || e.key.toLowerCase() === "k") && gameMode === 2) {
-                let now = Date.now();
-                if (now - lastKPressTime < 300) {
-                    switchActivePlayer(2);
-                    lastKPressTime = 0;
-                } else {
-                    lastKPressTime = now;
-                }
-            }
-
-            // Q: Jutsu yoki Oddiy Zarba
+            // P1 uchun Q tugmasi: Chakra 100 bo'lsa Jutsu, aks holda Oddiy Shot
             if (e.code === "KeyQ") {
                 triggerSuperOrShot(team1[activeP1], true);
             }
-            // U: Jutsu yoki Oddiy Zarba
+            // P2 uchun U tugmasi: Chakra 100 bo'lsa Jutsu, aks holda Oddiy Shot
             if (e.code === "KeyU" && gameMode === 2) {
                 triggerSuperOrShot(team2[activeP2], false);
             }
             if (e.code === "Tab") { e.preventDefault(); switchActivePlayer(1); }
         });
-
         window.addEventListener("keyup", e => { keys[e.code] = false; keys[e.key.toLowerCase()] = false; });
 
         function switchActivePlayer(teamNum) {
@@ -280,6 +253,7 @@ HTML
             }
         }
 
+        // Q yoki U bosilganda chakra to'liq bo'lsa Jutsu, yo'qsa kuchli shot
         function triggerSuperOrShot(p, isTeam1) {
             if (p.chakra >= 100) {
                 p.chakra = 0;
@@ -289,6 +263,7 @@ HTML
                 ball.vz = -4;
                 createExplosion(ball.x, ball.y, p.shirtColor);
             } else {
+                // Oddiy zarba berish simulyatsiyasi
                 let dir = isTeam1 ? 1 : -1;
                 let dist = Math.hypot(ball.x - p.x, ball.y - p.y);
                 if (dist < 40) {
@@ -492,12 +467,17 @@ HTML
         function update() {
             if (!gameRunning) return;
 
+            // 1-JAMOANING KLAVIATURA VA HARAKAT SHTATLARI
             team1.forEach((p, i) => {
                 if (i === activeP1) {
-                    let moveX = 0;
+                    let moveX = 0, moveY = 0;
+                    // A & D - Chap va O'ng
                     if (keys["KeyA"] || keys["a"] || tState.left) moveX = -3.5;
                     if (keys["KeyD"] || keys["d"] || tState.right) moveX = 3.5;
+                    
+                    // W - Sakrash (Yuqoriga Z-o'qi sakrashi)
                     if ((keys["KeyW"] || keys["w"] || tState.up) && p.z === 0) p.vz = -7;
+
                     p.vx = moveX;
                 } else {
                     if (ball.x > p.x + 8) p.vx = 1.8;
@@ -509,12 +489,17 @@ HTML
                 }
             });
 
+            // 2-JAMOANING KLAVIATURA VA HARAKAT SHTATLARI
             team2.forEach((p, i) => {
                 if (gameMode === 2 && i === activeP2) {
                     let moveX = 0;
+                    // J & L - Chap va O'ng
                     if (keys["KeyJ"] || keys["j"]) moveX = -3.5;
                     if (keys["KeyL"] || keys["l"]) moveX = 3.5;
+
+                    // I - Sakrash
                     if ((keys["KeyI"] || keys["i"]) && p.z === 0) p.vz = -7;
+
                     p.vx = moveX;
                 } else {
                     if (ball.x > p.x + 8) p.vx = 2;
@@ -542,6 +527,7 @@ HTML
                 if (dist < ball.r + p.r + 4 && Math.abs(ball.z - p.z) < 15) {
                     ball.super = false;
                     let isTeam1 = idx < 11;
+                    // S: Pass
                     let passKey = isTeam1 ? (keys["KeyS"] || keys["s"] || tState.pass) : (keys["KeyK"] || keys["k"]);
                     
                     if (passKey) {
